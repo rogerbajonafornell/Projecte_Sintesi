@@ -16,6 +16,15 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+import os
+from dotenv import load_dotenv
+
+# Carregar les variables d'entorn des de .env
+load_dotenv()
+
+# Obtenir la clau d'OpenAI
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -76,10 +85,15 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'sintesi',
+        'USER': 'root', 
+        'PASSWORD': '1234',  
+        'HOST': '127.0.0.1', 
+        'PORT': '3306',
     }
 }
+
 
 
 # Password validation
@@ -124,11 +138,4 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-import os
-from dotenv import load_dotenv
 
-# Carregar les variables d'entorn des de .env
-load_dotenv()
-
-# Obtenir la clau d'OpenAI
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")

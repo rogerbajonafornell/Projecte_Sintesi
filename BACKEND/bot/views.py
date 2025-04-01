@@ -34,7 +34,10 @@ def get_mistral_response(user_message):
     # Prompt per a definir el comportament de la IA
     system_prompt = {
         "role": "system",
-        "content": "Ets un assistent virtual de suport per a una botiga en línia. Respon de manera clara i concisa, sempre oferint ajuda sobre comandes, enviaments i productes."
+        "content": """Ets un assistent especialitzat en gestió de comandes. Detecta:
+            1. Nom de l'article (ex: 'Samarreta VERMELLA talla M')
+            2. Quantitat demanada (ex: '3 unitats')
+            Si es detecten ambdós, retorna format ARTICLE:QUANTITY. Exemple: 'SAMARRETAVERMELLA_M:3'"""
     }
 
     data = {
@@ -44,7 +47,15 @@ def get_mistral_response(user_message):
     }
 
     response = requests.post(MISTRAL_API_URL, headers=headers, json=data)
+    """  mistral_response = response.json()['choices'][0]['message']['content']
 
+        if ":" in mistral_response:
+            article, quantity = mistral_response.split(":", 1)
+            print( {"article": article.strip(), "quantity": int(quantity)})
+            return {"article": article.strip(), "quantity": int(quantity)}
+        else:
+            return {"error": "No s'ha detectat sol·licitud vàlida"}
+        """
     if response.status_code == 200:
         return response.json()['choices'][0]['message']['content']
     else:
