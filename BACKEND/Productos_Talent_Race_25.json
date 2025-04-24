@@ -1,0 +1,812 @@
+[
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 80062,
+    "fields": {
+      "DescripcionArticulo": "Afilalápiz metálico Campus",
+      "PVP": 1.8,
+      "Unidades": 990
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 749204,
+    "fields": {
+      "DescripcionArticulo": "Agua Font-Vella",
+      "PVP": 2.0,
+      "Unidades": 0
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 130027,
+    "fields": {
+      "DescripcionArticulo": "Alfombrilla Ratón 22 x 18 cm",
+      "PVP": 3.1,
+      "Unidades": 464
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 247460,
+    "fields": {
+      "DescripcionArticulo": "Altavoces de Escritorio Compactos Mediarange",
+      "PVP": 20.18,
+      "Unidades": 475
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 180750,
+    "fields": {
+      "DescripcionArticulo": "Archivador Plus Office A4 Azul",
+      "PVP": 6.18,
+      "Unidades": 0
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 180382,
+    "fields": {
+      "DescripcionArticulo": "Archivador Plus Office A4 Gris",
+      "PVP": 4.98,
+      "Unidades": 0
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 180380,
+    "fields": {
+      "DescripcionArticulo": "Archivador Plus Office A4 Verde",
+      "PVP": 6.48,
+      "Unidades": 0
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 180089,
+    "fields": {
+      "DescripcionArticulo": "Archivadores cartón Plus",
+      "PVP": 3.88,
+      "Unidades": 0
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 260121,
+    "fields": {
+      "DescripcionArticulo": "Armario de llaves",
+      "PVP": 73.54,
+      "Unidades": 0
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 749231,
+    "fields": {
+      "DescripcionArticulo": "Azucar blanco",
+      "PVP": 6.44,
+      "Unidades": 0
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 180943,
+    "fields": {
+      "DescripcionArticulo": "Bandeja combomaxi",
+      "PVP": 17.94,
+      "Unidades": 503
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 180358,
+    "fields": {
+      "DescripcionArticulo": "Bandeja sobremesa Negra",
+      "PVP": 10.51,
+      "Unidades": 906
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 180590,
+    "fields": {
+      "DescripcionArticulo": "Bandeja sobremesa Azul",
+      "PVP": 10.51,
+      "Unidades": 2374
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 220756,
+    "fields": {
+      "DescripcionArticulo": "Blister 4 pilas CR2032",
+      "PVP": 2.9,
+      "Unidades": 2738
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 81344,
+    "fields": {
+      "DescripcionArticulo": "Blister 6 marcadores Plus",
+      "PVP": 4.55,
+      "Unidades": 2516
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1599,
+    "fields": {
+      "DescripcionArticulo": "Bloc Campus Espiral 80 Hojas",
+      "PVP": 4.93,
+      "Unidades": 208
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 2549,
+    "fields": {
+      "DescripcionArticulo": "Bloc Campus Espiral 50 Hojas",
+      "PVP": 3.29,
+      "Unidades": 631
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1142,
+    "fields": {
+      "DescripcionArticulo": "Bloc espiral tapa blanda",
+      "PVP": 3.0,
+      "Unidades": 1965
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1143,
+    "fields": {
+      "DescripcionArticulo": "Bloc espiral tapa básica",
+      "PVP": 2.04,
+      "Unidades": 2086
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1148,
+    "fields": {
+      "DescripcionArticulo": "Bloc espiral tapa A5",
+      "PVP": 2.04,
+      "Unidades": 2346
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1137,
+    "fields": {
+      "DescripcionArticulo": "Bloc espiral tapa A4",
+      "PVP": 5.76,
+      "Unidades": 2111
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1156,
+    "fields": {
+      "DescripcionArticulo": "Bloc espiral tapa dura",
+      "PVP": 4.33,
+      "Unidades": 294
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1116,
+    "fields": {
+      "DescripcionArticulo": "Bloc Microperforado Campus A4",
+      "PVP": 5.05,
+      "Unidades": 679
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1113,
+    "fields": {
+      "DescripcionArticulo": "Bloc notas microperforado A5",
+      "PVP": 2.75,
+      "Unidades": 1827
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1114,
+    "fields": {
+      "DescripcionArticulo": "Bloc notas microperforado A6 ",
+      "PVP": 1.56,
+      "Unidades": 2553
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 630093,
+    "fields": {
+      "DescripcionArticulo": "Bloc papel seda Campus 8 colores",
+      "PVP": 2.16,
+      "Unidades": 752
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1208,
+    "fields": {
+      "DescripcionArticulo": "Blocs notas Amarillo flúor",
+      "PVP": 1.52,
+      "Unidades": 1557
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1209,
+    "fields": {
+      "DescripcionArticulo": "Blocs notas Verde flúor",
+      "PVP": 1.52,
+      "Unidades": 413
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 80904,
+    "fields": {
+      "DescripcionArticulo": "Bolígrafo Plus Soft rojo",
+      "PVP": 1.1,
+      "Unidades": 484
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 80931,
+    "fields": {
+      "DescripcionArticulo": "Bolígrafo Plus Trio negro",
+      "PVP": 1.1,
+      "Unidades": 881
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 81140,
+    "fields": {
+      "DescripcionArticulo": "Boligrafo Plus Trio Turquesa",
+      "PVP": 1.4,
+      "Unidades": 226
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 81173,
+    "fields": {
+      "DescripcionArticulo": "Bolígrafo Tinta Gel Negro",
+      "PVP": 1.62,
+      "Unidades": 1910
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 81079,
+    "fields": {
+      "DescripcionArticulo": "Boligrafo Uni Max ultragel azul",
+      "PVP": 1.53,
+      "Unidades": 423
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 81122,
+    "fields": {
+      "DescripcionArticulo": "Boligrafo Unimax aerogrip negro",
+      "PVP": 1.84,
+      "Unidades": 1356
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1846,
+    "fields": {
+      "DescripcionArticulo": "Bolsas acolchadas Kraft",
+      "PVP": 1.09,
+      "Unidades": 868
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1351,
+    "fields": {
+      "DescripcionArticulo": "Bolsas Kraft Acolchadas Marrón",
+      "PVP": 3.39,
+      "Unidades": 814
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 630001,
+    "fields": {
+      "DescripcionArticulo": "Borrador Plus Office",
+      "PVP": 10.26,
+      "Unidades": 1080
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 220430,
+    "fields": {
+      "DescripcionArticulo": "Caja 100 espirales",
+      "PVP": 7.1,
+      "Unidades": 1560
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 181164,
+    "fields": {
+      "DescripcionArticulo": "Caja 100 fundas multitaladro A4",
+      "PVP": 10.63,
+      "Unidades": 143
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 220578,
+    "fields": {
+      "DescripcionArticulo": "Calculadora BS-115",
+      "PVP": 10.96,
+      "Unidades": 2372
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 220512,
+    "fields": {
+      "DescripcionArticulo": "Calculadora Plus Office",
+      "PVP": 13.67,
+      "Unidades": 2693
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 180639,
+    "fields": {
+      "DescripcionArticulo": "Carpeta A4 gomas azul",
+      "PVP": 4.62,
+      "Unidades": 1136
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 180764,
+    "fields": {
+      "DescripcionArticulo": "Carpeta A4 gomas roja",
+      "PVP": 4.62,
+      "Unidades": 272
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 180765,
+    "fields": {
+      "DescripcionArticulo": "Carpeta A4 gomas amarilla",
+      "PVP": 4.62,
+      "Unidades": 844
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 180663,
+    "fields": {
+      "DescripcionArticulo": "Carpeta Flexible 40 fundas",
+      "PVP": 7.5,
+      "Unidades": 2290
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 180949,
+    "fields": {
+      "DescripcionArticulo": "Carpeta Proyecto Plus Office A4",
+      "PVP": 11.23,
+      "Unidades": 607
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 630482,
+    "fields": {
+      "DescripcionArticulo": "Cartulina 200gr Amarillo Limón",
+      "PVP": 25.21,
+      "Unidades": 1349
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 630485,
+    "fields": {
+      "DescripcionArticulo": "Cartulina 200gr Azul Maldivas",
+      "PVP": 29.99,
+      "Unidades": 778
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 630503,
+    "fields": {
+      "DescripcionArticulo": "Cartulina 200g Azul Marino",
+      "PVP": 28.69,
+      "Unidades": 1506
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 630736,
+    "fields": {
+      "DescripcionArticulo": "Cartulina Campus Blanco",
+      "PVP": 13.98,
+      "Unidades": 2204
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40343,
+    "fields": {
+      "DescripcionArticulo": "Chinchetas cromadas Campus",
+      "PVP": 2.01,
+      "Unidades": 610
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40016,
+    "fields": {
+      "DescripcionArticulo": "Cinta adhesiva invisible",
+      "PVP": 1.57,
+      "Unidades": 1407
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40456,
+    "fields": {
+      "DescripcionArticulo": "Cinta métricas 3m.",
+      "PVP": 11.44,
+      "Unidades": 2432
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 220495,
+    "fields": {
+      "DescripcionArticulo": "Cizalla Mini",
+      "PVP": 30.94,
+      "Unidades": 914
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40340,
+    "fields": {
+      "DescripcionArticulo": "Clavadora Plus Office 202",
+      "PVP": 67.06,
+      "Unidades": 287
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40167,
+    "fields": {
+      "DescripcionArticulo": "Clips Makro Paper",
+      "PVP": 3.3,
+      "Unidades": 2563
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40433,
+    "fields": {
+      "DescripcionArticulo": "Cutter Plus Office profesional 110",
+      "PVP": 3.74,
+      "Unidades": 1805
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40377,
+    "fields": {
+      "DescripcionArticulo": "Cutter Plus Office profesional 135",
+      "PVP": 2.41,
+      "Unidades": 2591
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40432,
+    "fields": {
+      "DescripcionArticulo": "Cutter Plus Office profesional 170",
+      "PVP": 7.55,
+      "Unidades": 2608
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 81635,
+    "fields": {
+      "DescripcionArticulo": "Estuche 10 fluorescentes Pen Campus",
+      "PVP": 4.15,
+      "Unidades": 1609
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1634,
+    "fields": {
+      "DescripcionArticulo": "Etiquetas adhesivas Plus Office",
+      "PVP": 21.48,
+      "Unidades": 2207
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 80267,
+    "fields": {
+      "DescripcionArticulo": "Fluorescente Plus Office Text Liner Amarillo",
+      "PVP": 1.05,
+      "Unidades": 2660
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 80265,
+    "fields": {
+      "DescripcionArticulo": "Fluorescente Plus Office Text Liner Azul",
+      "PVP": 1.05,
+      "Unidades": 1603
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 80269,
+    "fields": {
+      "DescripcionArticulo": "Fluorescente Plus Office Text Liner Rosa",
+      "PVP": 1.05,
+      "Unidades": 690
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 630187,
+    "fields": {
+      "DescripcionArticulo": "Forro libros Makro Paper",
+      "PVP": 4.84,
+      "Unidades": 1327
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 749946,
+    "fields": {
+      "DescripcionArticulo": "Gel de manos dermo líquido",
+      "PVP": 34.61,
+      "Unidades": 570
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 749937,
+    "fields": {
+      "DescripcionArticulo": "Gel hidroalcohol 300ml",
+      "PVP": 25.97,
+      "Unidades": 1382
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 630552,
+    "fields": {
+      "DescripcionArticulo": "Goma Eva Campus",
+      "PVP": 11.74,
+      "Unidades": 1116
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40210,
+    "fields": {
+      "DescripcionArticulo": "Gomas elásticas Makro",
+      "PVP": 3.44,
+      "Unidades": 1896
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40601,
+    "fields": {
+      "DescripcionArticulo": "Grapadora Plus",
+      "PVP": 30.1,
+      "Unidades": 2234
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40427,
+    "fields": {
+      "DescripcionArticulo": "Grapadora Profesional de Gruesos Plus",
+      "PVP": 55.29,
+      "Unidades": 500
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 118769,
+    "fields": {
+      "DescripcionArticulo": "Marcador fluorescente Stabilo boss azul",
+      "PVP": 2.04,
+      "Unidades": 619
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 80869,
+    "fields": {
+      "DescripcionArticulo": "Marcador Plus Office Blanco",
+      "PVP": 4.87,
+      "Unidades": 510
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 220752,
+    "fields": {
+      "DescripcionArticulo": "Pilas alcalina LR-20",
+      "PVP": 7.05,
+      "Unidades": 1695
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 80591,
+    "fields": {
+      "DescripcionArticulo": "Minas Plus Office ",
+      "PVP": 3.58,
+      "Unidades": 1985
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1002,
+    "fields": {
+      "DescripcionArticulo": "Papel A4 Campus 80g Azul",
+      "PVP": 6.65,
+      "Unidades": 1976
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 2892,
+    "fields": {
+      "DescripcionArticulo": "Papel A4 Campus 80g Amarillo",
+      "PVP": 6.65,
+      "Unidades": 2148
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 2891,
+    "fields": {
+      "DescripcionArticulo": "Papel A4 Campus 80g Naranja",
+      "PVP": 6.65,
+      "Unidades": 973
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 1019,
+    "fields": {
+      "DescripcionArticulo": "Papel A4 Campus 80g blanco",
+      "PVP": 4.14,
+      "Unidades": 479
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40597,
+    "fields": {
+      "DescripcionArticulo": "Pegamento en barra Plus",
+      "PVP": 2.43,
+      "Unidades": 1598
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40552,
+    "fields": {
+      "DescripcionArticulo": "Pegamento universal Plus",
+      "PVP": 4.41,
+      "Unidades": 1811
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 220528,
+    "fields": {
+      "DescripcionArticulo": "Pizarra blanca magnética",
+      "PVP": 14.44,
+      "Unidades": 2600
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 600029,
+    "fields": {
+      "DescripcionArticulo": "Regla Campus University",
+      "PVP": 1.3,
+      "Unidades": 1602
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 80301,
+    "fields": {
+      "DescripcionArticulo": "Rotulador Permanente Rojo",
+      "PVP": 2.04,
+      "Unidades": 827
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 80299,
+    "fields": {
+      "DescripcionArticulo": "Rotulador Permanente Negro",
+      "PVP": 1.35,
+      "Unidades": 569
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 2380,
+    "fields": {
+      "DescripcionArticulo": "Sobres C4 Makro Paper",
+      "PVP": 4.22,
+      "Unidades": 2345
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 180897,
+    "fields": {
+      "DescripcionArticulo": "Subcarpeta Exacompta",
+      "PVP": 7.36,
+      "Unidades": 1016
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40277,
+    "fields": {
+      "DescripcionArticulo": "Tijera Makro",
+      "PVP": 3.23,
+      "Unidades": 1761
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40284,
+    "fields": {
+      "DescripcionArticulo": "Tijera Plus",
+      "PVP": 5.07,
+      "Unidades": 916
+    }
+  },
+  {
+    "model": "inventari.Article",
+    "CodigoArticulo": 40686,
+    "fields": {
+      "DescripcionArticulo": "Tijera Smart ",
+      "PVP": 4.75,
+      "Unidades": 2241
+    }
+  }
+]
