@@ -12,6 +12,7 @@ import { ProvaBackendService } from './prova-backend.service';
 })
 export class AppComponent implements OnInit {
   message = '';
+  title = 'title';
 
   constructor(private svc: ProvaBackendService) {}
 
