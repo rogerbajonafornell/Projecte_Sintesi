@@ -1,34 +1,163 @@
 import os
 import json
+import logging
 import requests
 import subprocess
+import threading
+import time
 import re
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseBadRequest
-from asgiref.sync import async_to_sync
-from telegram import Bot
 from dotenv import load_dotenv
 
 from .whisper_service import transcribe_audio
 from inventari.models import Article
 
-# Carregar variables d'entorn des de .env
+# --- Configuració de logging per depuració ---
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(message)s")
+logger = logging.getLogger(__name__)
+
+# Carregar variables d'entorn
 load_dotenv()
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 
-# URLs de les API
+# URLs de l'API de Telegram
 TELEGRAM_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+TELEGRAM_GETFILE_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/getFile"
+
+# Endpoint de Mistral
 MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions"
 
-# Estat intern per a comandes i confirmacions pendents
-pending_orders = {}          # chat_id -> article_desc
-pending_confirmations = {}   # chat_id -> (Article, quantity)
+# Estat intern per a comandes i confirmacions
+pending_orders = {}        # chat_id -> article_desc
+pending_confirmations = {} # chat_id -> (Article, quantity)
+
+# Deduplciació d'updates
+processed_update_ids = set()
+update_lock = threading.Lock()
+
+# Prompt de sistema per donar control a la IA
+SYSTEM_PROMPT = {
+    "role": "system",
+    "content": (
+        "Ets ShopMate, un assistent de compres conversacional. "
+        "Decideix tu mateix què fer en cada moment: parlar de manera natural, preguntar a l'usuari, buscar un article, demanar confirmació, etc. No mostris mai JSON brut al client; utilitza sempre text natural. "
+        "Detecta l'idioma de l'usuari i respon sempre en aquest idioma. "
+        "Retorna només un JSON amb claus: action ∈ {ask,search,order,confirm,cancel}, article: string|null, quantity: int|null, message: string, language: string."
+    )
+}
+
+@csrf_exempt
+def telegram_webhook(request):
+    if request.method != 'POST':
+        return HttpResponseBadRequest("Mètode no permès")
+    threading.Thread(target=process_update, args=(request.body,)).start()
+    return JsonResponse({'status': 'received'})
+
+
+def call_mistral(messages):
+    data = {
+        "model": "mistral-small",
+        "messages": messages,
+        "temperature": 0.2,
+        "response_format": {"type": "json_object"}
+    }
+    resp = requests.post(
+        MISTRAL_API_URL,
+        headers={"Authorization": f"Bearer {MISTRAL_API_KEY}", "Content-Type": "application/json"},
+        json=data
+    )
+    logger.debug("Mistral status %s: %s", resp.status_code, resp.text)
+    if resp.status_code != 200:
+        raise RuntimeError("Mistral error: %s" % resp.text)
+    return resp.json()["choices"][0]["message"]["content"]
+
+
+def process_update(body):
+    try:
+        data = json.loads(body)
+    except json.JSONDecodeError:
+        logger.error("JSON no vàlid al webhook: %s", body)
+        return
+
+    update_id = data.get('update_id')
+    with update_lock:
+        if update_id in processed_update_ids:
+            logger.debug("Ignorant update_id duplicat: %s", update_id)
+            return
+        processed_update_ids.add(update_id)
+
+    msg = data.get('message', {})
+    chat_id = msg.get('chat', {}).get('id')
+
+    # Gestionar veu
+    if 'voice' in msg:
+        transcription, err = handle_voice_message(msg['voice']['file_id'])
+        if transcription is None:
+            send_telegram_message(chat_id, err)
+            return
+        user_text = transcription
+    else:
+        user_text = (msg.get('text') or '').strip()
+
+    # Construir conversa per Mistral
+    convo = [SYSTEM_PROMPT, {"role": "user", "content": user_text}]
+    try:
+        result = call_mistral(convo)
+    except Exception as e:
+        logger.error("Error cridant Mistral: %s", e)
+        send_telegram_message(chat_id, "Error amb la IA, torna-ho a intentar.")
+        return
+
+    try:
+        payload = json.loads(result)
+        # Si la IA retorna una llista, agafem el primer element
+        if isinstance(payload, list) and payload:
+            payload = payload[0]
+    except json.JSONDecodeError:
+        logger.error("Resposta invàlida de la IA: %s", result)
+        send_telegram_message(chat_id, "Resposta invàlida de la IA.")
+        return
+
+    action = payload.get('action')
+    article = payload.get('article')
+    qty = payload.get('quantity')
+    message = payload.get('message')
+    lang = payload.get('language')
+
+    # Enviar missatge generat per la IA
+    send_telegram_message(chat_id, message)
+
+    # Executar accions backend si cal
+    if action == 'search' and article:
+        art = buscar_article(article)
+        if art:
+            # Preguntar quantitats de manera natural
+            send_telegram_message(chat_id, f"Quantes unitats de '{art.DescripcionArticulo}' vols?")
+            pending_orders[chat_id] = art.DescripcionArticulo
+        else:
+            send_telegram_message(chat_id, f"Ho sento, no trobo l'article '{article}'.")
+
+    elif action == 'order' and article and isinstance(qty, int):
+        art = buscar_article(article)
+        if art and art.Unidades >= qty:
+            actualitzar_unidades(art, qty)
+            send_telegram_message(chat_id, f"Compra feta: {qty}× '{art.DescripcionArticulo}'. Gràcies! 😊")
+        elif art and art.Unidades == 0:
+            send_telegram_message(chat_id, f"Ho sento, l'article '{art.DescripcionArticulo}' està esgotat.")
+        else:
+            send_telegram_message(chat_id, f"Només queden {art.Unidades if art else 0} unitats de '{article}'. Quantes en vols? 😊")
+            pending_orders[chat_id] = article
+
+    # 'confirm' i 'cancel' gestionats per la IA mitjançant message retornat
 
 
 def send_telegram_message(chat_id, text):
-    payload = {"chat_id": chat_id, "text": text}
-    requests.post(TELEGRAM_URL, json=payload)
+    try:
+        requests.post(TELEGRAM_URL, json={"chat_id": chat_id, "text": text})
+    except Exception as e:
+        logger.error("Error enviant missatge Telegram: %s", e)
 
 
 def buscar_article(descripcio):
@@ -44,26 +173,27 @@ def actualitzar_unidades(article, quantitat):
 
 
 def convert_ogg_to_wav(input_file, output_file):
-    command = [
-        'ffmpeg', '-y', '-i', input_file,
-        '-ac', '1', '-ar', '16000', output_file
-    ]
+    command = ['ffmpeg', '-y', '-i', input_file, '-ac', '1', '-ar', '16000', output_file]
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     return result.returncode
 
 
 def handle_voice_message(file_id):
-    bot = Bot(token=TELEGRAM_TOKEN)
-    file_info = async_to_sync(bot.get_file)(file_id)
-    path = file_info.file_path
-    download_url = path if path.startswith('http') else f"https://api.telegram.org/file/bot{TELEGRAM_TOKEN}/{path}"
+    # Obtenir info de l'arxiu via HTTP
+    resp_info = requests.get(TELEGRAM_GETFILE_URL, params={"file_id": file_id})
+    if resp_info.status_code != 200:
+        return None, "Error obtenint informació de l'àudio"
+    info = resp_info.json().get('result', {})
+    path = info.get('file_path')
+    if not path:
+        return None, "Error obtenint ruta de l'àudio"
+    download_url = f"https://api.telegram.org/file/bot{TELEGRAM_TOKEN}/{path}"
 
     os.makedirs('temp', exist_ok=True)
-    ogg_path = f"temp/{file_id}.ogg"
-    wav_path = f"temp/{file_id}.wav"
+    ogg_path, wav_path = f"temp/{file_id}.ogg", f"temp/{file_id}.wav"
 
     resp = requests.get(download_url)
-    if not resp.ok or len(resp.content) == 0:
+    if not resp.ok or not resp.content:
         return None, "Error descarregant àudio"
     with open(ogg_path, 'wb') as f:
         f.write(resp.content)
@@ -76,123 +206,3 @@ def handle_voice_message(file_id):
     os.remove(ogg_path)
     os.remove(wav_path)
     return transcription, language
-
-
-def get_mistral_json_response(user_message):
-    system_prompt = {
-        "role": "system",
-        "content": (
-            "Ets ShopMate, un assistent de compres conversacional i empàtic integrat en Django+Telegram. "
-            "Retorna sempre un JSON amb claus: intent (search|order|confirm|cancel), article (o null), quantity (o null), "
-            "confirmation (true|false|null). No afegeix res més."
-        )
-    }
-    few_shot = [
-        {"role": "user", "content": "Vull una cafetera"},
-        {"role": "assistant", "content": json.dumps({
-            "intent": "search", "article": "cafetera", "quantity": None, "confirmation": None
-        })},
-        {"role": "user", "content": "En vull 2"},
-        {"role": "assistant", "content": json.dumps({
-            "intent": "order", "article": "cafetera", "quantity": 2, "confirmation": None
-        })},
-        {"role": "user", "content": "Sí, confirma"},
-        {"role": "assistant", "content": json.dumps({
-            "intent": "confirm", "article": "cafetera", "quantity": 2, "confirmation": True
-        })}
-    ]
-
-    data = {
-        "model": "mistral-small",
-        "messages": [system_prompt] + few_shot + [{"role": "user", "content": user_message}],
-        "temperature": 0.0
-    }
-    resp = requests.post(
-        MISTRAL_API_URL,
-        headers={"Authorization": f"Bearer {MISTRAL_API_KEY}", "Content-Type": "application/json"},
-        json=data
-    )
-    if resp.status_code != 200:
-        return {"error": "Error connectant amb Mistral IA."}
-
-    content = resp.json().get("choices", [])[0].get("message", {}).get("content", "").strip()
-    try:
-        parsed = json.loads(content)
-    except json.JSONDecodeError:
-        return {"error": f"Resposta invàlida: {content}"}
-    return parsed
-
-@csrf_exempt
-def telegram_webhook(request):
-    if request.method != 'POST':
-        return HttpResponseBadRequest("Mètode no permès")
-    try:
-        body = json.loads(request.body)
-    except json.JSONDecodeError:
-        return HttpResponseBadRequest("JSON no vàlid")
-
-    message = body.get('message', {})
-    chat_id = message.get('chat', {}).get('id')
-    text = (message.get('text') or '').strip()
-
-    # Veu
-    if 'voice' in message:
-        file_id = message['voice']['file_id']
-        transcription, err = handle_voice_message(file_id)
-        if transcription is None:
-            send_telegram_message(chat_id, err)
-            return JsonResponse({'status': 'voice_error'})
-        text = transcription
-
-    # Invocar Mistral per obtenir JSON d'intents
-    if text:
-        result = get_mistral_json_response(text)
-        if 'error' in result:
-            send_telegram_message(chat_id, result['error'])
-            return JsonResponse({'status': 'ai_error'})
-
-        intent = result.get('intent')
-        article_desc = result.get('article')
-        quantity = result.get('quantity')
-        confirmation = result.get('confirmation')
-
-        # SEARCH intent
-        if intent == 'search' and article_desc:
-            art = buscar_article(article_desc)
-            if not art:
-                send_telegram_message(chat_id, f"No trobo l'article '{article_desc}'.")
-                return JsonResponse({'status': 'article_not_found'})
-            pending_orders[chat_id] = art.DescripcionArticulo
-            send_telegram_message(chat_id, f"Quantes unitats de '{art.DescripcionArticulo}' vols?")
-            return JsonResponse({'status': 'awaiting_quantity'})
-
-        # ORDER intent
-        if intent == 'order' and article_desc and quantity is not None:
-            art = buscar_article(article_desc)
-            if not art:
-                send_telegram_message(chat_id, f"No trobo l'article '{article_desc}'.")
-                return JsonResponse({'status': 'article_not_found'})
-            if art.Unidades < quantity:
-                pending_orders[chat_id] = art.DescripcionArticulo
-                send_telegram_message(chat_id, f"Només queden {art.Unidades} unitats. Quantes en vols?")
-                return JsonResponse({'status': 'insufficient_stock'})
-            total = quantity * getattr(art, 'Precio', 0)
-            pending_confirmations[chat_id] = (art, quantity)
-            send_telegram_message(chat_id, f"Confirmes compra de {quantity}× '{art.DescripcionArticulo}' (total {total}€)? (sí/no)")
-            return JsonResponse({'status': 'awaiting_confirmation'})
-
-        # CONFIRM intent
-        if intent == 'confirm' and confirmation and chat_id in pending_confirmations:
-            art, qty = pending_confirmations.pop(chat_id)
-            actualitzar_unidades(art, qty)
-            send_telegram_message(chat_id, f"Compra feta: {qty}× '{art.DescripcionArticulo}'. Gràcies!")
-            return JsonResponse({'status': 'order_completed'})
-
-        # CANCEL intent
-        if intent == 'cancel':
-            pending_orders.pop(chat_id, None)
-            pending_confirmations.pop(chat_id, None)
-            send_telegram_message(chat_id, "Comanda cancel·lada.")
-            return JsonResponse({'status': 'order_cancelled'})
-
-    return JsonResponse({'status': 'ok'})
