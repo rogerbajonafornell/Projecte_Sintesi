@@ -1,0 +1,15 @@
+{
+    "BACKEND_RESPONSE": "Resposta del backend:",
+    "NAV": {
+        "INVENTORY": "Veure Inventari",
+        "ORDERS": "Veure Comandes",
+        "USERS": "Veure Usuaris"
+    },
+    "INVENTORY": {
+        "TITLE": "Inventari",
+        "CODE": "Codi",
+        "DESCRIPTION": "Descripció",
+        "PVP": "Preu Unitari",
+        "QUANTITY": "Unitats"
+    }
+}
