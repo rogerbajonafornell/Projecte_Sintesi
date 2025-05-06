@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 
 from .whisper_service import transcribe_audio
 from inventari.models import Article
+from .models import Usuari
 
 # --- Configuració de logging per depuració ---
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(message)s")
@@ -90,6 +91,21 @@ def process_update(body):
 
     msg = data.get('message', {})
     chat_id = msg.get('chat', {}).get('id')
+    
+    # Guardar/Actualitzar dades de l'usuari
+    user_data = msg.get('from', {})
+    user_id = user_data.get('id')
+    first_name = user_data.get('first_name', '')
+    username = user_data.get('username')
+
+    # Crear o actualitzar l'usuari
+    Usuari.objects.update_or_create(
+        UserId=user_id,
+        defaults={
+            'FirstName': first_name,
+            'Username': username,
+        }
+    )
 
     # Gestionar veu
     if 'voice' in msg:
