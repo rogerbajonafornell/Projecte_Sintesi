@@ -6,3 +6,7 @@ class ArticleListAPIView(generics.ListAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
 
+class ArticleDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+    lookup_field = 'CodigoArticulo'

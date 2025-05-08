@@ -14,6 +14,10 @@ from .whisper_service import transcribe_audio
 from inventari.models import Article
 from .models import Usuari
 
+from rest_framework import generics
+from .models import Usuari, Comanda
+from .serializers import UsuariSerializer, ComandaSerializer
+
 # --- Configuració de logging per depuració ---
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
@@ -222,3 +226,13 @@ def handle_voice_message(file_id):
     os.remove(ogg_path)
     os.remove(wav_path)
     return transcription, language
+
+# Apis usuaris i comandes
+
+class UsuariListAPIView(generics.ListAPIView):
+    queryset = Usuari.objects.all()
+    serializer_class = UsuariSerializer
+
+class ComandaListAPIView(generics.ListAPIView):
+    queryset = Comanda.objects.all()
+    serializer_class = ComandaSerializer
