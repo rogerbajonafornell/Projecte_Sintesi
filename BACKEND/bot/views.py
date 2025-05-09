@@ -1,208 +1,255 @@
 import os
+import io
 import json
-import logging
 import requests
-import subprocess
 import threading
-import time
 import re
+from openai import OpenAI
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseBadRequest
 from dotenv import load_dotenv
 
-from .whisper_service import transcribe_audio
 from inventari.models import Article
-
-# --- Configuració de logging per depuració ---
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(message)s")
-logger = logging.getLogger(__name__)
 
 # Carregar variables d'entorn
 load_dotenv()
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# Inicialitzar client OpenAI
+openai = OpenAI(api_key=OPENAI_API_KEY)
 
 # URLs de l'API de Telegram
 TELEGRAM_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
 TELEGRAM_GETFILE_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/getFile"
 
-# Endpoint de Mistral
-MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions"
-
-# Estat intern per a comandes i confirmacions
-pending_orders = {}        # chat_id -> article_desc
-pending_confirmations = {} # chat_id -> (Article, quantity)
-
-# Deduplciació d'updates
+# Estat intern per a comandes i conversa
+pending_orders = {}        # chat_id -> article_name
+pending_confirmations = {} # chat_id -> (article_name, quantity)
+chat_language = {}         # chat_id -> language code
+conversation_history = {}  # chat_id -> list of messages
 processed_update_ids = set()
 update_lock = threading.Lock()
 
-# Prompt de sistema per donar control a la IA
+# System prompt per GPT-4 Turbo, gestió automàtica d'idioma
 SYSTEM_PROMPT = {
     "role": "system",
     "content": (
-        "Ets ShopMate, un assistent de compres conversacional. "
-        "Decideix tu mateix què fer en cada moment: parlar de manera natural, preguntar a l'usuari, buscar un article, demanar confirmació, etc. No mostris mai JSON brut al client; utilitza sempre text natural. "
-        "Detecta l'idioma de l'usuari i respon sempre en aquest idioma. "
-        "Retorna només un JSON amb claus: action ∈ {ask,search,order,confirm,cancel}, article: string|null, quantity: int|null, message: string, language: string."
+        "You are ShopMate, a professional, multilingual shopping assistant. "
+        "Always ask and answer in the same language as the user’s last message. "
+        "Follow this flow and output only JSON with keys: action, article, quantity, message, language.\n\n"
+        "1. If no article named, action=ask, article=null, quantity=null, ask: 'Which item would you like to buy?'.\n"
+        "2. When user gives an article name, action=search, article=<name>, quantity=null, ask: 'How many units of <article> do you want?'.\n"
+        "3. When user gives a numeric quantity, action=confirm, article=<name>, quantity=<int>, ask: 'Do you confirm purchasing <quantity> of <article>?'.\n"
+        "4. If user confirms, action=order; if declines, action=cancel. "
+        "Generate stock check and dynamic success or out-of-stock messages."
     )
 }
 
+# Funció per netejar la resposta GPT de blocs Markdown abans de parsejar JSON
+def neteja_resposta(resposta: str) -> str:
+    """
+    Elimina qualsevol bloc de codi Markdown ``` o ```json```
+    i retorna la cadena neta per fer json.loads().
+    """
+    print(f"⚙️ Cleaning response: {resposta!r}")
+    resposta = re.sub(r'```(?:json)?\n?', '', resposta)
+    resposta = re.sub(r'```', '', resposta)
+    clean = resposta.strip()
+    print(f"⚙️ Cleaned response: {clean!r}")
+    return clean
+
+def generate_error_message(chat_id, error_context):
+    """Genera un missatge d'error personalitzat amb OpenAI."""
+    prompt = f"""
+    Genera un missatge d'error amigable i concís en l'idioma de l'usuari per a un bot de Telegram.
+    Context de l'error: {error_context}.
+    No incloguis explicacions tècniques, només un missatge per a l'usuari.
+    """
+    try:
+        error_result = call_openai([{"role": "user", "content": prompt}], response_format={"type": "json_object"})
+        if error_result:
+            payload = json.loads(error_result)
+            return payload.get("message", "Ho sento, hi ha hagut un error intern. Torna-ho a intentar.")
+    except Exception:
+        # Missatge de reserva si la crida falla
+        return "Ho sento, hi ha hagut un error intern. Torna-ho a intentar."
+    return "Ho sento, hi ha hagut un error intern. Torna-ho a intentar."
+
 @csrf_exempt
 def telegram_webhook(request):
+    print(f"🚀 Webhook hit with method {request.method}")
     if request.method != 'POST':
+        print("⚠️ Invalid method, returning 400")
         return HttpResponseBadRequest("Mètode no permès")
     threading.Thread(target=process_update, args=(request.body,)).start()
     return JsonResponse({'status': 'received'})
 
 
-def call_mistral(messages):
-    data = {
-        "model": "mistral-small",
-        "messages": messages,
-        "temperature": 0.2,
-        "response_format": {"type": "json_object"}
-    }
-    resp = requests.post(
-        MISTRAL_API_URL,
-        headers={"Authorization": f"Bearer {MISTRAL_API_KEY}", "Content-Type": "application/json"},
-        json=data
+def call_openai(messages):
+    print(f"⚙️ Calling OpenAI with messages: {messages}")
+    resp = openai.chat.completions.create(
+    model="gpt-4o-2024-08-06",
+    messages=messages,
+    temperature=0.2,
+    response_format={"type": "json_object"} #importanttttt
     )
-    logger.debug("Mistral status %s: %s", resp.status_code, resp.text)
-    if resp.status_code != 200:
-        raise RuntimeError("Mistral error: %s" % resp.text)
-    return resp.json()["choices"][0]["message"]["content"]
+    content = resp.choices[0].message.content
+    print(f"⚙️ OpenAI raw response: {content!r}")
+    clean = neteja_resposta(content)
+    return clean
 
 
 def process_update(body):
+    print(f"🔄 process_update received body: {body}")
     try:
         data = json.loads(body)
     except json.JSONDecodeError:
-        logger.error("JSON no vàlid al webhook: %s", body)
+        print(f"⚠️ Invalid JSON: {body}")
         return
 
     update_id = data.get('update_id')
     with update_lock:
         if update_id in processed_update_ids:
-            logger.debug("Ignorant update_id duplicat: %s", update_id)
+            print(f"⚠️ Duplicate update_id {update_id}")
             return
         processed_update_ids.add(update_id)
 
     msg = data.get('message', {})
     chat_id = msg.get('chat', {}).get('id')
+    print(f"👤 Chat ID: {chat_id}")
+    if not chat_id:
+        return
 
-    # Gestionar veu
     if 'voice' in msg:
-        transcription, err = handle_voice_message(msg['voice']['file_id'])
-        if transcription is None:
-            send_telegram_message(chat_id, err)
-            return
-        user_text = transcription
+        print("🎤 Voice message detected")
+        user_text = handle_voice_message(msg['voice']['file_id']) or ''
     else:
         user_text = (msg.get('text') or '').strip()
+    print(f"💬 User text: {user_text}")
 
-    # Construir conversa per Mistral
-    convo = [SYSTEM_PROMPT, {"role": "user", "content": user_text}]
-    try:
-        result = call_mistral(convo)
-    except Exception as e:
-        logger.error("Error cridant Mistral: %s", e)
-        send_telegram_message(chat_id, "Error amb la IA, torna-ho a intentar.")
+    history = conversation_history.setdefault(chat_id, [])
+    history.append({"role": "user", "content": user_text})
+    print(f"📚 Conversation history: {history}")
+
+    convo = [SYSTEM_PROMPT] + history
+    result = call_openai(convo)
+
+    # Codi principal
+    if not result:
+        print("⚠️ No result from OpenAI, sending custom error message")
+        error_message = generate_error_message(chat_id, "No s'ha rebut cap resposta d'OpenAI.")
+        send_telegram_message(chat_id, error_message)
         return
 
     try:
         payload = json.loads(result)
-        # Si la IA retorna una llista, agafem el primer element
-        if isinstance(payload, list) and payload:
-            payload = payload[0]
-    except json.JSONDecodeError:
-        logger.error("Resposta invàlida de la IA: %s", result)
-        send_telegram_message(chat_id, "Resposta invàlida de la IA.")
+        print(f"✅ Parsed payload: {payload}")
+    except json.JSONDecodeError as e:
+        print(f"⚠️ JSON decode error: {e}, result was: {result!r}")
+        error_message = generate_error_message(chat_id, "La resposta rebuda no té un format vàlid.")
+        send_telegram_message(chat_id, error_message)
         return
 
     action = payload.get('action')
     article = payload.get('article')
     qty = payload.get('quantity')
     message = payload.get('message')
-    lang = payload.get('language')
+    lang = payload.get('language', chat_language.get(chat_id, 'en'))
+    chat_language[chat_id] = lang
+    print(f"🎯 Action: {action}, Article: {article}, Quantity: {qty}, Language: {lang}")
 
-    # Enviar missatge generat per la IA
+    # Interceptar 'search' per validar stock abans de demanar unitats
+    if action == 'search' and article:
+        art_obj = buscar_article(article)
+        if not art_obj:
+            print(f"❌ Article not found: {article}")
+            #prompt que es passa a la ia quan no es trova l'article.
+            error_prompt = (
+                f"You are a helpful assistant responding in {lang}. "
+                f"The user requested an article '{article}' that does not exist in inventory. "
+                "Write a polite, user-friendly error message in the same language, "
+                "and suggest checking the name or trying a different product. "
+                "Please respond in JSON format with a 'message' key containing the error text."
+            )
+            ai_error = call_openai([
+                {"role": "system", "content": "Generate user-facing error messages in JSON format."},
+                {"role": "user", "content": error_prompt}
+            ])
+            error_message = json.loads(ai_error)["message"]
+            print(f"📨 Sending AI-generated error: {error_message}")
+            send_telegram_message(chat_id, error_message)
+            conversation_history.pop(chat_id, None)
+            return
+
+    # Enviar missatge generat per GPT
+    print(f"📨 Sending message to user: {message}")
+    history.append({"role": "assistant", "content": message})
     send_telegram_message(chat_id, message)
 
-    # Executar accions backend si cal
+    # Gestionar estats pendents
     if action == 'search' and article:
-        art = buscar_article(article)
-        if art:
-            # Preguntar quantitats de manera natural
-            send_telegram_message(chat_id, f"Quantes unitats de '{art.DescripcionArticulo}' vols?")
-            pending_orders[chat_id] = art.DescripcionArticulo
-        else:
-            send_telegram_message(chat_id, f"Ho sento, no trobo l'article '{article}'.")
+        art_obj = buscar_article(article)
+        if art_obj:
+            pending_orders[chat_id] = art_obj.DescripcionArticulo
+            print(f"🛒 Pending order: {pending_orders[chat_id]}")
+
+    elif action == 'confirm' and article and isinstance(qty, int):
+        pending_confirmations[chat_id] = (article, qty)
+        print(f"🔔 Pending confirmation: {pending_confirmations[chat_id]}")
 
     elif action == 'order' and article and isinstance(qty, int):
-        art = buscar_article(article)
-        if art and art.Unidades >= qty:
-            actualitzar_unidades(art, qty)
-            send_telegram_message(chat_id, f"Compra feta: {qty}× '{art.DescripcionArticulo}'. Gràcies! 😊")
-        elif art and art.Unidades == 0:
-            send_telegram_message(chat_id, f"Ho sento, l'article '{art.DescripcionArticulo}' està esgotat.")
+        art_obj = buscar_article(article)
+        if art_obj and art_obj.Unidades >= qty:
+            actualitzar_unidades(art_obj, qty)
+            print(f"✅ Order processed: {article} x{qty}")
         else:
-            send_telegram_message(chat_id, f"Només queden {art.Unidades if art else 0} unitats de '{article}'. Quantes en vols? 😊")
-            pending_orders[chat_id] = article
+            print(f"⚠️ Out of stock for {article}")
+        pending_confirmations.pop(chat_id, None)
+        conversation_history.pop(chat_id, None)
+        chat_language.pop(chat_id, None)
 
-    # 'confirm' i 'cancel' gestionats per la IA mitjançant message retornat
+    elif action == 'cancel':
+        print(f"❌ Order cancelled for: {article}")
+        pending_confirmations.pop(chat_id, None)
+        conversation_history.pop(chat_id, None)
+        chat_language.pop(chat_id, None)
 
 
 def send_telegram_message(chat_id, text):
+    print(f"🚀 send_telegram_message -> chat_id: {chat_id}, text: {text}")
     try:
         requests.post(TELEGRAM_URL, json={"chat_id": chat_id, "text": text})
     except Exception as e:
-        logger.error("Error enviant missatge Telegram: %s", e)
+        print(f"⚠️ Error sending message: {e}")
 
 
 def buscar_article(descripcio):
+    key = descripcio.strip().lower()
+    print(f"🔍 buscar_article -> key: {key}")
     try:
-        return Article.objects.get(DescripcionArticulo__iexact=descripcio)
+        art = Article.objects.get(DescripcionArticulo__iexact=key)
+        print(f"✅ Article found: {art}")
+        return art
     except Article.DoesNotExist:
+        print(f"❌ Article.DoesNotExist for key: {key}")
         return None
 
 
 def actualitzar_unidades(article, quantitat):
+    print(f"📦 Stock before: {article.Unidades}")
     article.Unidades -= quantitat
     article.save()
-
-
-def convert_ogg_to_wav(input_file, output_file):
-    command = ['ffmpeg', '-y', '-i', input_file, '-ac', '1', '-ar', '16000', output_file]
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    return result.returncode
+    print(f"📦 Stock after: {article.Unidades}")
 
 
 def handle_voice_message(file_id):
-    # Obtenir info de l'arxiu via HTTP
-    resp_info = requests.get(TELEGRAM_GETFILE_URL, params={"file_id": file_id})
-    if resp_info.status_code != 200:
-        return None, "Error obtenint informació de l'àudio"
-    info = resp_info.json().get('result', {})
-    path = info.get('file_path')
-    if not path:
-        return None, "Error obtenint ruta de l'àudio"
-    download_url = f"https://api.telegram.org/file/bot{TELEGRAM_TOKEN}/{path}"
-
-    os.makedirs('temp', exist_ok=True)
-    ogg_path, wav_path = f"temp/{file_id}.ogg", f"temp/{file_id}.wav"
-
-    resp = requests.get(download_url)
-    if not resp.ok or not resp.content:
-        return None, "Error descarregant àudio"
-    with open(ogg_path, 'wb') as f:
-        f.write(resp.content)
-
-    if convert_ogg_to_wav(ogg_path, wav_path) != 0:
-        os.remove(ogg_path)
-        return None, "Error convertint àudio"
-
-    transcription, language = transcribe_audio(wav_path)
-    os.remove(ogg_path)
-    os.remove(wav_path)
-    return transcription, language
+    print(f"⬇️ Downloading voice file {file_id}")
+    info = requests.get(TELEGRAM_GETFILE_URL, params={"file_id":file_id}).json().get('result', {})
+    ogg = requests.get(f"https://api.telegram.org/file/bot{TELEGRAM_TOKEN}/{info.get('file_path')}").content
+    print("🎧 File downloaded, sending to Whisper")
+    buf = io.BytesIO(ogg)
+    buf.name = 'voice.ogg'
+    resp = openai.audio.transcriptions.create(model='whisper-1', file=buf, response_format='text')
+    print(f"📝 Transcription result: {resp}")
+    return resp
