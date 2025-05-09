@@ -258,6 +258,7 @@ def actualitzar_unidades(article, quantitat):
     print(f"📦 Stock before: {article.Unidades}")
     article.Unidades -= quantitat
     article.save()
+    
     print(f"📦 Stock after: {article.Unidades}")
 
 
