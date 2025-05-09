@@ -3,7 +3,7 @@ from inventari.models import Article
 
 # Create your models here.
 class Usuari(models.Model):
-    UserId = models.IntegerField(primary_key=True)
+    UserId = models.BigIntegerField(primary_key=True)
     FirstName = models.CharField(max_length=20)
     Username = models.CharField(max_length=20)
 
