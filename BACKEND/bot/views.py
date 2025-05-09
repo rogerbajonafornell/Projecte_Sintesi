@@ -8,12 +8,12 @@ from openai import OpenAI
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseBadRequest
 from dotenv import load_dotenv
-
+from decimal import Decimal
 from inventari.models import Article
 from bot.models import Comanda, Usuari
 from .serializers import UsuariSerializer, ComandaSerializer
 from rest_framework import generics
-
+ 
 # Carregar variables d'entorn
 load_dotenv()
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
@@ -78,6 +78,33 @@ def generate_error_message(chat_id, error_context):
         # Missatge de reserva si la crida falla
         return "Ho sento, hi ha hagut un error intern. Torna-ho a intentar."
     return "Ho sento, hi ha hagut un error intern. Torna-ho a intentar."
+
+def generar_comanda(article_id, preu_u, quantitat, user_id):
+    from decimal import Decimal
+    from bot.models import Usuari, Comanda
+    from inventari.models import Article
+
+    # 1️⃣ Carregar instàncies relacionades
+    usuari_obj  = Usuari.objects.get(pk=user_id)
+    article_obj = Article.objects.get(pk=article_id)
+
+    # 2️⃣ Calcular total amb Decimal
+    preu_u_dec = Decimal(str(preu_u))
+    total      = preu_u_dec * Decimal(quantitat)
+
+    print(f"Creant comanda -> user:{usuari_obj}, article:{article_obj}, qty:{quantitat}, total:{total}")
+
+    # 3️⃣ Crear Comanda amb kwargs
+    comanda = Comanda.objects.create(
+        user      = usuari_obj,
+        article   = article_obj,
+        Quantitat = quantitat,
+        PreuFinal = total
+    )
+
+    print(f"Comanda desada: {comanda}")
+    return comanda
+
 
 @csrf_exempt
 def telegram_webhook(request):
@@ -220,7 +247,9 @@ def process_update(body):
         art_obj = buscar_article(article)
         if art_obj and art_obj.Unidades >= qty:
             actualitzar_unidades(art_obj, qty)
+            generar_comanda(art_obj.CodigoArticulo,art_obj.PVP,qty,user_id)
             print(f"✅ Order processed: {article} x{qty}")
+
         else:
             print(f"⚠️ Out of stock for {article}")
         pending_confirmations.pop(chat_id, None)
