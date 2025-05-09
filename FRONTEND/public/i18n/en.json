@@ -1,0 +1,15 @@
+{
+    "BACKEND_RESPONSE": "Backend response:",
+    "NAV": {
+        "INVENTORY": "View Inventory",
+        "ORDERS": "View Orders",
+        "USERS": "View Users"
+    },
+    "INVENTORY": {
+        "TITLE": "Inventory",
+        "CODE": "Code",
+        "DESCRIPTION": "Description",
+        "PVP": "Price Per Item",
+        "QUANTITY": "Quantity"
+    }
+}

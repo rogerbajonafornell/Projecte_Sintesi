@@ -1,42 +1,61 @@
-import { Component } from '@angular/core';
+import { Component, signal, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { InventoryService, Usuari } from '../../inventory.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule], // ✅ Importar CommonModule para *ngFor
+  imports: [CommonModule, TranslateModule],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.css']
 })
-export class UsersComponent {
-  users = [
-    { username: "JuanPerez", phone: "123-456-7890" },
-    { username: "MariaLopez", phone: "987-654-3210" },
-    { username: "CarlosGarcia", phone: "555-123-4567" },
-    { username: "AnaMartinez", phone: "444-567-8901" },
-    { username: "PedroGomez", phone: "222-345-6789" },
-    { username: "LauraDiaz", phone: "666-789-0123" },
-    { username: "LuisFernandez", phone: "111-222-3333" },
-    { username: "SofiaRamirez", phone: "777-888-9999" },
-    { username: "DavidHernandez", phone: "888-999-0000" },
-    { username: "ElenaTorres", phone: "999-000-1111" }
-  ];
+export class UsersComponent implements OnDestroy {
+  private inventoryService = inject(InventoryService);
+  private translate = inject(TranslateService);
 
-  currentPage = 1;
+  users = signal<Usuari[]>([]);
+  currentPage = signal(1);
   itemsPerPage = 5;
 
-  get totalPages(): number {
-    return Math.ceil(this.users.length / this.itemsPerPage);
+  translatedTitle = signal<string>('');
+  private langSub: Subscription;
+
+  constructor() {
+    this.inventoryService.getUsuaris().subscribe((data) => {
+      this.users.set(data);
+    });
+
+    this.loadTranslations();
+
+    this.langSub = this.translate.onLangChange.subscribe(() => {
+      this.loadTranslations();
+    });
   }
 
-  getCurrentPageItems() {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.users.slice(start, start + this.itemsPerPage);
+  loadTranslations() {
+    this.translate.get('USERS.TITLE').subscribe((res: string) => {
+      this.translatedTitle.set(res);
+    });
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.users().length / this.itemsPerPage);
+  }
+
+  getCurrentPageItems(): Usuari[] {
+    const start = (this.currentPage() - 1) * this.itemsPerPage;
+    return this.users().slice(start, start + this.itemsPerPage);
   }
 
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
+      this.currentPage.set(page);
     }
+  }
+
+  ngOnDestroy() {
+    this.langSub?.unsubscribe();
   }
 }

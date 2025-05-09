@@ -10,6 +10,9 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from dotenv import load_dotenv
 
 from inventari.models import Article
+from bot.models import Comanda, Usuari
+from .serializers import UsuariSerializer, ComandaSerializer
+from rest_framework import generics
 
 # Carregar variables d'entorn
 load_dotenv()
@@ -120,6 +123,21 @@ def process_update(body):
     print(f"👤 Chat ID: {chat_id}")
     if not chat_id:
         return
+    
+    # Guardar/Actualitzar dades de l'usuari
+    user_data = msg.get('from', {})
+    user_id = user_data.get('id')
+    first_name = user_data.get('first_name', '')
+    username = user_data.get('username')
+
+    # Crear o actualitzar l'usuari
+    Usuari.objects.update_or_create(
+        UserId=user_id,
+        defaults={
+            'FirstName': first_name,
+            'Username': username,
+        }
+    )
 
     if 'voice' in msg:
         print("🎤 Voice message detected")
@@ -253,3 +271,12 @@ def handle_voice_message(file_id):
     resp = openai.audio.transcriptions.create(model='whisper-1', file=buf, response_format='text')
     print(f"📝 Transcription result: {resp}")
     return resp
+    
+
+class UsuariListAPIView(generics.ListAPIView):
+    queryset = Usuari.objects.all()
+    serializer_class = UsuariSerializer
+
+class ComandaListAPIView(generics.ListAPIView):
+    queryset = Comanda.objects.all()
+    serializer_class = ComandaSerializer
