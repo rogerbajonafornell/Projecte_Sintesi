@@ -5,7 +5,7 @@ from inventari.models import Article
 class Usuari(models.Model):
     UserId = models.IntegerField(primary_key=True)
     FirstName = models.CharField(max_length=20)
-    Username = models.CharField(max_length=20)
+    Username = models.CharField(max_length=20, null=True, blank=True)
 
 class Comanda(models.Model):
     ComandaId = models.AutoField(primary_key=True)

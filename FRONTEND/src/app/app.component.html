@@ -1,15 +1,21 @@
-<div class="container">
-    <h1>Respuesta del backend:</h1>
-    <p>{{ message }}</p>
+<!-- Mensaje del backend -->
+<div class="container my-4">
+    <div class="alert alert-info shadow-sm" role="alert">
+        <h5 class="alert-heading mb-1">Respuesta del backend:</h5>
+        <p class="mb-0">{{ message }}</p>
+    </div>
 </div>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+<!-- Barra de navegación -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container">
-        <a class="navbar-brand" href="#">My App</a>
+        <a class="navbar-brand fw-bold" href="#">My App</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="nav-link" routerLink="/inventory" routerLinkActive="active">{{ 'NAV.INVENTORY' | translate }}</a>
                 </li>
@@ -20,11 +26,13 @@
                     <a class="nav-link" routerLink="/users" routerLinkActive="active">{{ 'NAV.USERS' | translate }}</a>
                 </li>
             </ul>
-            <div class="dropdown ms-auto">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  🌐 {{ currentLang.toUpperCase() }}
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
+
+            <!-- Selector de idioma -->
+            <div class="dropdown">
+                <button class="btn btn-outline-light dropdown-toggle" type="button" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            🌐 {{ currentLang.toUpperCase() }}
+          </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
                     <li><a class="dropdown-item" (click)="switchLang('es')">🇪🇸 Español</a></li>
                     <li><a class="dropdown-item" (click)="switchLang('ca')">🏴 Català</a></li>
                     <li><a class="dropdown-item" (click)="switchLang('en')">🇬🇧 English</a></li>
@@ -34,6 +42,7 @@
     </div>
 </nav>
 
-<div class="container mt-4">
+<!-- Contenido principal -->
+<div class="container my-5">
     <router-outlet></router-outlet>
 </div>
