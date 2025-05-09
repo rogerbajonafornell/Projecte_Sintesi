@@ -10,4 +10,4 @@ env/
 .venv/
 
 # Configuració d'entorns locals
-.env
+
