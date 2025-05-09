@@ -46,10 +46,10 @@ export class InventoryService {
   }
   
   getUsuaris() {
-    return this.http.get<Usuari[]>(`${this.apiUrl}/api/inventari/usuaris/`);
+    return this.http.get<Usuari[]>(`${this.apiUrl}/api/bot/usuaris/`);
   }
 
   getComandes() {
-    return this.http.get<Comanda[]>(`${this.apiUrl}/api/inventari/comandes/`);
+    return this.http.get<Comanda[]>(`${this.apiUrl}/api/bot/comandes/`);
   }
 }

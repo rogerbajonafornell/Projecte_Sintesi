@@ -9,3 +9,5 @@ venv/
 env/
 .venv/
 
+# Configuració d'entorns locals
+
