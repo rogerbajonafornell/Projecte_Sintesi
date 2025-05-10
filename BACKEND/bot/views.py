@@ -312,6 +312,6 @@ class ComandaListAPIView(generics.ListAPIView):
     serializer_class = ComandaSerializer
     
 class ComandaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Article.objects.all()
+    queryset = Comanda.objects.all()
     serializer_class = ComandaSerializer
     lookup_field = 'ComandaId'
