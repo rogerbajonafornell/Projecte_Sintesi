@@ -5,11 +5,11 @@
         <table class="table table-hover align-middle table-bordered mb-0">
             <thead class="table-dark text-center">
                 <tr>
-                    <th>{{ 'INVENTORY.CODE' | translate }}</th>
+                    <th>{{ 'GENERAL.CODE' | translate }}</th>
                     <th>{{ 'INVENTORY.DESCRIPTION' | translate }}</th>
                     <th>{{ 'INVENTORY.PVP' | translate }} (€)</th>
                     <th>{{ 'INVENTORY.QUANTITY' | translate }}</th>
-                    <th style="width: 160px;">Acciones</th>
+                    <th style="width: 160px;">{{ 'INVENTORY.ACTIONS' | translate }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,21 +44,21 @@
         </table>
     </div>
 
-    <!-- Paginación -->
     <nav class="mt-4" aria-label="Paginación de inventario">
         <ul class="pagination justify-content-center">
             <li class="page-item" [class.disabled]="currentPage() === 1">
                 <button class="page-link" (click)="goToPage(currentPage() - 1)">
-            ← {{ 'PREVIOUS' | translate }}
-          </button>
+                    ← {{ 'GENERAL.PREVIOUS' | translate }}
+                </button>
             </li>
             <li class="page-item disabled">
-                <span class="page-link">Página {{ currentPage() }} / {{ totalPages }}</span>
+                <span class="page-link">{{ currentPage() }} / {{ totalPages || 1
+                    }}</span>
             </li>
             <li class="page-item" [class.disabled]="currentPage() === totalPages">
                 <button class="page-link" (click)="goToPage(currentPage() + 1)">
-            {{ 'NEXT' | translate }} →
-          </button>
+                    {{ 'GENERAL.NEXT' | translate }} →
+                </button>
             </li>
         </ul>
     </nav>

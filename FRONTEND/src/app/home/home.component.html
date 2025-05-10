@@ -1,24 +1,34 @@
 <div class="container text-center mt-5">
-    <h1 class="mb-4">Bienvenido a My App</h1>
-    <p class="lead">Gestione su inventario y pedidos de manera eficiente.</p>
+    <h1 class="mb-4 fw-bold text-primary">Bienvenido a My App</h1>
+    <p class="lead text-muted">Gestione su inventario y pedidos de manera eficiente.</p>
 
-    <div class="row mt-5">
+    <div class="row mt-5 g-4">
         <div class="col-md-6">
-            <div class="card shadow-lg">
-                <div class="card-body">
-                    <h5 class="card-title">Inventario</h5>
-                    <p class="card-text">Consulte y administre el stock disponible.</p>
-                    <a routerLink="/inventory" class="btn btn-primary">Ver Inventario</a>
+            <div class="card shadow border-1 rounded-4 h-100">
+                <div class="card-body py-4">
+                    <div class="mb-3 text-primary">
+                        <i class="bi bi-box-seam display-5"></i>
+                    </div>
+                    <h5 class="card-title fw-semibold">Inventario</h5>
+                    <p class="card-text text-muted">Consulte y administre el stock disponible con facilidad.</p>
+                    <a routerLink="/inventory" class="btn btn-outline-primary px-4 py-2 rounded-pill">
+                        Ver Inventario
+                    </a>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6">
-            <div class="card shadow-lg">
-                <div class="card-body">
-                    <h5 class="card-title">Pedidos</h5>
-                    <p class="card-text">Revise y controle los pedidos en curso.</p>
-                    <a routerLink="/orders" class="btn btn-success">Ver Pedidos</a>
+            <div class="card shadow border-1 rounded-4 h-100">
+                <div class="card-body py-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-receipt display-5"></i>
+                    </div>
+                    <h5 class="card-title fw-semibold">Pedidos</h5>
+                    <p class="card-text text-muted">Revise y controle los pedidos en curso de forma clara.</p>
+                    <a routerLink="/orders" class="btn btn-outline-success px-4 py-2 rounded-pill">
+                        Ver Pedidos
+                    </a>
                 </div>
             </div>
         </div>

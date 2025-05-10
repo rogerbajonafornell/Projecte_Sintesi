@@ -1,5 +1,11 @@
 {
     "BACKEND_RESPONSE": "Resposta del backend:",
+    "GENERAL": {
+        "NEXT": "Següent",
+        "PREVIOUS": "Anterior",
+        "CODE": "Codi",
+        "ACTIONS": "Accions"
+    },
     "NAV": {
         "INVENTORY": "Veure Inventari",
         "ORDERS": "Veure Comandes",
@@ -7,9 +13,20 @@
     },
     "INVENTORY": {
         "TITLE": "Inventari",
-        "CODE": "Codi",
         "DESCRIPTION": "Descripció",
         "PVP": "Preu Unitari",
         "QUANTITY": "Unitats"
+    },
+    "ORDERS": {
+        "TITLE": "Comandes",
+        "TOTAL_PRICE": "Preu Total",
+        "QUANTITY": "Quantitat",
+        "ARTICLE": "Article",
+        "USER": "Usuari"
+    },
+    "USERS": {
+        "TITLE": "Usuaris",
+        "USERNAME": "Nom d'Usuari",
+        "FIRST_NAME": "Nom"
     }
 }

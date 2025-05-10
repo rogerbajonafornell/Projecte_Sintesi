@@ -54,6 +54,19 @@ export class OrdersComponent implements OnDestroy {
     }
   }
 
+  deleteItem(codigo: number) {
+    if (confirm('¿Estás seguro de que deseas eliminar este artículo?')) {
+      this.inventoryService.deleteOrder(codigo).subscribe({
+        next: () => {
+          this.orders.set(this.orders().filter(item => item.ComandaId !== codigo));
+        },
+        error: (err) => {
+          console.error('Error eliminando artículo', err);
+        }
+      });
+    }
+  }
+
   ngOnDestroy() {
     this.langSub?.unsubscribe();
   }

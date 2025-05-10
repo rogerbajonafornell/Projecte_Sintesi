@@ -1,4 +1,3 @@
-<!-- Mensaje del backend -->
 <div class="container my-4">
     <div class="alert alert-info shadow-sm" role="alert">
         <h5 class="alert-heading mb-1">Respuesta del backend:</h5>
@@ -7,31 +6,40 @@
 </div>
 
 <!-- Barra de navegación -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="#">My App</a>
+        <a class="navbar-brand fw-bold text-uppercase" href="#">
+            <i class="bi bi-box-seam me-2"></i>My App
+        </a>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" routerLink="/inventory" routerLinkActive="active">{{ 'NAV.INVENTORY' | translate }}</a>
+                    <a class="nav-link px-3" routerLink="/inventory" routerLinkActive="active">
+                        <i class="bi bi-archive me-1"></i>{{ 'NAV.INVENTORY' | translate }}
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" routerLink="/orders" routerLinkActive="active">{{ 'NAV.ORDERS' | translate }}</a>
+                    <a class="nav-link px-3" routerLink="/orders" routerLinkActive="active">
+                        <i class="bi bi-receipt me-1"></i>{{ 'NAV.ORDERS' | translate }}
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" routerLink="/users" routerLinkActive="active">{{ 'NAV.USERS' | translate }}</a>
+                    <a class="nav-link px-3" routerLink="/users" routerLinkActive="active">
+                        <i class="bi bi-people me-1"></i>{{ 'NAV.USERS' | translate }}
+                    </a>
                 </li>
             </ul>
 
-            <!-- Selector de idioma -->
+            <!-- Language Selector -->
             <div class="dropdown">
-                <button class="btn btn-outline-light dropdown-toggle" type="button" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            🌐 {{ currentLang.toUpperCase() }}
-          </button>
+                <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    🌐 <span class="ms-2">{{ currentLang.toUpperCase() }}</span>
+                </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
                     <li><a class="dropdown-item" (click)="switchLang('es')">🇪🇸 Español</a></li>
                     <li><a class="dropdown-item" (click)="switchLang('ca')">🏴 Català</a></li>
@@ -41,6 +49,7 @@
         </div>
     </div>
 </nav>
+
 
 <!-- Contenido principal -->
 <div class="container my-5">

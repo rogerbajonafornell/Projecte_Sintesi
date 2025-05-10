@@ -1,46 +1,50 @@
-<div class="container mt-4">
-    <h2 class="mb-3">{{ translatedTitle() }}</h2>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">{{ translatedTitle() }}</h2>
 
-    <table class="table table-striped table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th>Código</th>
-                <th>Artículo</th>
-                <th>PVP</th>
-                <th>Cantidad</th>
-                <th>Precio Final</th>
-                <th>Usuario</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let order of getCurrentPageItems()">
-                <td>{{ order.ComandaId }}</td>
-                <td>{{ order.Article.DescripcionArticulo }}</td>
-                <td>{{ order.Article.PVP | currency: 'EUR' }}</td>
-                <td>{{ order.Quantitat }}</td>
-                <td>{{ order.PreuFinal | currency: 'EUR' }}</td>
-                <td>{{ order.User.Username }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="table-responsive shadow-sm rounded-3 overflow-hidden">
+        <table class="table table-hover align-middle table-bordered mb-0">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>{{ 'GENERAL.CODE' | translate }}</th>
+                    <th>{{ 'ORDERS.ARTICLE' | translate }}</th>
+                    <th>{{ 'INVENTORY.PVP' | translate }} (€)</th>
+                    <th>{{ 'ORDERS.QUANTITY' | translate }}</th>
+                    <th>{{ 'ORDERS.TOTAL_PRICE' | translate }} (€)</th>
+                    <th>{{ 'ORDERS.USER' | translate }}</th>
+                    <th>{{ 'GENERAL.ACTIONS' | translate }}</th>
 
-    <!-- Paginación -->
-    <nav>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let order of getCurrentPageItems()">
+                    <td class="text-center fw-semibold">{{ order.ComandaId }}</td>
+                    <td>{{ order.Article.DescripcionArticulo }}</td>
+                    <td>{{ order.Article.PVP | number: '1.2-2' }}</td>
+                    <td>{{ order.Quantitat }}</td>
+                    <td>{{ order.PreuFinal | number: '1.2-2' }}</td>
+                    <td class="text-muted">{{ order.User.Username }}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" (click)="deleteItem(order.ComandaId)">🗑️</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <nav class="mt-4" aria-label="Paginación de pedidos">
         <ul class="pagination justify-content-center">
             <li class="page-item" [class.disabled]="currentPage() === 1">
                 <button class="page-link" (click)="goToPage(currentPage() - 1)">
-            {{ 'PAGINATION.PREV' | translate }}
-          </button>
+                    ← {{ 'GENERAL.PREVIOUS' | translate }}
+                </button>
             </li>
-
-            <li *ngFor="let page of [].constructor(totalPages); let i = index" class="page-item" [class.active]="currentPage() === i + 1">
-                <button class="page-link" (click)="goToPage(i + 1)">{{ i + 1 }}</button>
+            <li class="page-item disabled">
+                <span class="page-link">{{ currentPage() }} / {{ totalPages || 1 }}</span>
             </li>
-
             <li class="page-item" [class.disabled]="currentPage() === totalPages">
                 <button class="page-link" (click)="goToPage(currentPage() + 1)">
-            {{ 'PAGINATION.NEXT' | translate }}
-          </button>
+                    {{ 'GENERAL.NEXT' | translate }} →
+                </button>
             </li>
         </ul>
     </nav>

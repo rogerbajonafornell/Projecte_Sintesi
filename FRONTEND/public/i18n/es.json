@@ -1,5 +1,11 @@
 {
     "BACKEND_RESPONSE": "Respuesta del backend:",
+    "GENERAL": {
+        "NEXT": "Siguiente",
+        "PREVIOUS": "Anterior",
+        "CODE": "Código",
+        "ACTIONS": "Acciones"
+    },
     "NAV": {
         "INVENTORY": "Ver Inventario",
         "ORDERS": "Ver Pedidos",
@@ -7,9 +13,20 @@
     },
     "INVENTORY": {
         "TITLE": "Inventario",
-        "CODE": "Código",
         "DESCRIPTION": "Descripción",
         "PVP": "Precio Unitario",
         "QUANTITY": "Unidades"
+    },
+    "ORDERS": {
+        "TITLE": "Pedidos",
+        "TOTAL_PRICE": "Precio Total",
+        "QUANTITY": "Cantidad",
+        "ARTICLE": "Artículo",
+        "USER": "Usuario"
+    },
+    "USERS": {
+        "TITLE": "Usuarios",
+        "USERNAME": "Nombre de Usuario",
+        "FIRST_NAME": "Nombre"
     }
 }

@@ -52,4 +52,8 @@ export class InventoryService {
   getComandes() {
     return this.http.get<Comanda[]>(`${this.apiUrl}/api/bot/comandes/`);
   }
+
+  deleteOrder(id: number) {
+    return this.http.delete(`${this.apiUrl}/api/bot/comandes/${id}/`);
+  }
 }
