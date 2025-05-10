@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Usuari, Comanda
+from inventari.serializers import ArticleSerializer
 
 class UsuariSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,6 +8,9 @@ class UsuariSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ComandaSerializer(serializers.ModelSerializer):
+    Article = ArticleSerializer(source='article', read_only=True)
+    User = UsuariSerializer(source='user', read_only=True)
+
     class Meta:
         model = Comanda
-        fields = '__all__'
+        fields = ['ComandaId', 'Quantitat', 'PreuFinal', 'Article', 'User']
