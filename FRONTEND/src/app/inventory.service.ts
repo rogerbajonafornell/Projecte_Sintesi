@@ -19,8 +19,8 @@ export interface Comanda {
   ComandaId: number;
   User: Usuari;
   Article: Article;
-  quantitat: number;
-  preuFinal: number;
+  Quantitat: number;
+  PreuFinal: number;
   
 }
 
