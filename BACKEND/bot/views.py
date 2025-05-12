@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseBadRequest
 from dotenv import load_dotenv
 from decimal import Decimal
+from .utils import search_similar_articles
 from inventari.models import Article
 from bot.models import Comanda, Usuari
 from .serializers import UsuariSerializer, ComandaSerializer
@@ -18,6 +19,9 @@ from rest_framework import generics
 load_dotenv()
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+PINECONE_ENV = os.getenv("PINECONE_ENV")
 
 # Inicialitzar client OpenAI
 openai = OpenAI(api_key=OPENAI_API_KEY)
@@ -280,7 +284,15 @@ def buscar_article(descripcio):
         return art
     except Article.DoesNotExist:
         print(f"❌ Article.DoesNotExist for key: {key}")
-        return None
+        ### UN COP L'ARTICLE NO ES TROBA DE MANERA LITERAL EM BUSQUEM AMB ENDPOINTS GRÀCIES A PINECONE
+        similar_ids = search_similar_articles(key)
+        if similar_ids:
+            similar_articles = Article.objects.filter(CodigoArticulo__in=similar_ids)
+            print(f"🔍 Found similar articles: {[a.DescripcionArticulo for a in similar_articles]}")
+            return similar_articles  # Retorna un QuerySet amb articles similars
+        else:
+            print(f"❌ No similar articles found")
+            return None
 
 
 def actualitzar_unidades(article, quantitat):
