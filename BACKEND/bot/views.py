@@ -9,11 +9,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseBadRequest
 from dotenv import load_dotenv
 from decimal import Decimal
-from .utils import search_similar_articles
+#from .utils import search_similar_articles
 from inventari.models import Article
 from bot.models import Comanda, Usuari
 from .serializers import UsuariSerializer, ComandaSerializer
 from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework import status
  
 # Carregar variables d'entorn
 load_dotenv()
@@ -285,14 +287,14 @@ def buscar_article(descripcio):
     except Article.DoesNotExist:
         print(f"❌ Article.DoesNotExist for key: {key}")
         ### UN COP L'ARTICLE NO ES TROBA DE MANERA LITERAL EM BUSQUEM AMB ENDPOINTS GRÀCIES A PINECONE
-        similar_ids = search_similar_articles(key)
+        """  similar_ids = search_similar_articles(key)
         if similar_ids:
             similar_articles = Article.objects.filter(CodigoArticulo__in=similar_ids)
             print(f"🔍 Found similar articles: {[a.DescripcionArticulo for a in similar_articles]}")
             return similar_articles  # Retorna un QuerySet amb articles similars
         else:
             print(f"❌ No similar articles found")
-            return None
+            return None """
 
 
 def actualitzar_unidades(article, quantitat):
@@ -330,7 +332,7 @@ class ComandaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        article = instance.Article
+        article = instance.article
 
         # Sumar la cantidad de vuelta al inventario
         article.Unidades += instance.Quantitat
