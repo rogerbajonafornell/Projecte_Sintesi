@@ -327,3 +327,15 @@ class ComandaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comanda.objects.all()
     serializer_class = ComandaSerializer
     lookup_field = 'ComandaId'
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        article = instance.Article
+
+        # Sumar la cantidad de vuelta al inventario
+        article.Unidades += instance.Quantitat
+        article.save()
+
+        # Eliminar la comanda
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
