@@ -25,6 +25,8 @@ export class InventoryComponent implements OnDestroy {
 
   editingItem = signal<Article | null>(null);
 
+  editValidationErrors: any = {};
+
   constructor() {
     this.inventoryService.getArticles().subscribe((data) => {
       console.log(data);
@@ -86,19 +88,39 @@ export class InventoryComponent implements OnDestroy {
 
     // Validación
     if (!this.newItem.DescripcionArticulo?.trim()) {
-      this.validationErrors.DescripcionArticulo = true;
+      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+        this.validationErrors.DescripcionArticulo = msg
+      );
     }
-    if (this.newItem.PVP == null || this.newItem.PVP <= 0) {
-      this.validationErrors.PVP = true;
+    
+    // Validar PVP
+    if (this.newItem.PVP === null || this.newItem.PVP === '' || isNaN(this.newItem.PVP)) {
+      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+        this.validationErrors.PVP = msg
+      );
+    } else if (this.newItem.PVP <= 0) {
+      this.translate.get('ERRORS.POSITIVE_NUMBER').subscribe(msg =>
+        this.validationErrors.PVP = msg
+      );
     }
-    if (this.newItem.Unidades == null || this.newItem.Unidades < 0) {
-      this.validationErrors.Unidades = true;
+    
+    // Validar Unidades
+    if (this.newItem.Unidades === null || this.newItem.Unidades === '' || isNaN(this.newItem.Unidades)) {
+      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+        this.validationErrors.Unidades = msg
+      );
+    } else if (this.newItem.Unidades < 0) {
+      this.translate.get('ERRORS.NON_NEGATIVE_NUMBER').subscribe(msg =>
+        this.validationErrors.Unidades = msg
+      );
     }
-
+    
+  
+    // Si hay errores, no continuar
     if (Object.keys(this.validationErrors).length > 0) {
-      this.translate.get('FORM.VALIDATION_ERROR').subscribe(res => {
-        this.errorMessage = res;
-      });
+      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+        this.errorMessage = 'Por favor, corrige los errores antes de guardar.'
+      );
       return;
     }
 
@@ -138,12 +160,43 @@ export class InventoryComponent implements OnDestroy {
     this.editingItem.set({ ...item });
   }
 
-  cancelEdit() {
-    this.editingItem.set(null);
-  }
-
   saveEdit(edited: Article) {
-    // Aquí puedes enviar el cambio al backend
+    this.editValidationErrors = {};
+    this.errorMessage = '';
+  
+    if (!edited.DescripcionArticulo?.trim()) {
+      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+        this.editValidationErrors.DescripcionArticulo = msg
+      );
+    }
+  
+    if (edited.PVP === null || isNaN(edited.PVP)) {
+      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+        this.editValidationErrors.PVP = msg
+      );
+    } else if (edited.PVP <= 0) {
+      this.translate.get('ERRORS.POSITIVE_NUMBER').subscribe(msg =>
+        this.editValidationErrors.PVP = msg
+      );
+    }
+  
+    if (edited.Unidades === null ||  isNaN(edited.Unidades)) {
+      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+        this.editValidationErrors.Unidades = msg
+      );
+    } else if (edited.Unidades < 0) {
+      this.translate.get('ERRORS.NON_NEGATIVE_NUMBER').subscribe(msg =>
+        this.editValidationErrors.Unidades = msg
+      );
+    }
+  
+    if (Object.keys(this.editValidationErrors).length > 0) {
+      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+        this.errorMessage = 'Por favor, corrige los errores antes de guardar.'
+      );
+      return;
+    }
+  
     this.inventoryService.updateArticle(edited).subscribe({
       next: () => {
         const updatedList = this.inventory().map(item =>
@@ -153,9 +206,16 @@ export class InventoryComponent implements OnDestroy {
         this.editingItem.set(null);
       },
       error: (err) => {
-        console.error('Error actualizando artículo', err);
+        this.errorMessage = 'Error actualizando el artículo.';
+        console.error(err);
       }
     });
+  }
+  
+  cancelEdit() {
+    this.editingItem.set(null);
+    this.editValidationErrors = {};
+    this.errorMessage = '';
   }
 
   ngOnDestroy() {

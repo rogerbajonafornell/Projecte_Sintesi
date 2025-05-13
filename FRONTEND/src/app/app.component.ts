@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
   message = '';
   title = 'title';
   currentLang!: string;
+  currentYear = new Date().getFullYear();
 
   constructor(private svc: ProvaBackendService, private translate: TranslateService) {
     this.currentLang = 'es'

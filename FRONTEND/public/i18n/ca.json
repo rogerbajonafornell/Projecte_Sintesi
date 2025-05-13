@@ -1,5 +1,11 @@
 {
     "BACKEND_RESPONSE": "Resposta del backend:",
+    "ERRORS": {
+        "REQUIRED": "Aquest camp és obligatori.",
+        "POSITIVE_NUMBER": "Ha de ser més gran que 0.",
+        "NON_NEGATIVE_NUMBER": "No pot ser negatiu.",
+        "INVALID_CODE": "Ha de ser un nombre positiu."
+    },
     "GENERAL": {
         "NEXT": "Següent",
         "PREVIOUS": "Anterior",
@@ -31,5 +37,19 @@
         "TITLE": "Usuaris",
         "USERNAME": "Nom d'Usuari",
         "FIRST_NAME": "Nom"
+    },
+    "HOME": {
+        "TITLE": "Benvingut a BotigaRR",
+        "DESCRIPTION": "Gestiona el teu inventari i comandes de manera eficient.",
+        "INVENTORY": {
+            "TITLE": "Inventari",
+            "TEXT": "Consulta i administra l'estoc disponible amb facilitat.",
+            "BUTTON": "Veure Inventari"
+        },
+        "ORDERS": {
+            "TITLE": "Comandes",
+            "TEXT": "Revisa i controla les comandes en curs de manera clara.",
+            "BUTTON": "Veure Comandes"
+        }
     }
 }

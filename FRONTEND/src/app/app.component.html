@@ -1,57 +1,78 @@
-<div class="container my-4">
-    <div class="alert alert-info shadow-sm" role="alert">
-        <h5 class="alert-heading mb-1">Respuesta del backend:</h5>
-        <p class="mb-0">{{ message }}</p>
-    </div>
-</div>
+<div class="d-flex flex-column min-vh-100">
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-uppercase" href="#">
+                <i class="bi bi-box-seam me-2"></i>BotigaRR
+            </a>
 
-<!-- Barra de navegación -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-uppercase" href="#">
-            <i class="bi bi-box-seam me-2"></i>My App
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link px-3" routerLink="/inventory" routerLinkActive="active">
-                        <i class="bi bi-archive me-1"></i>{{ 'NAV.INVENTORY' | translate }}
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link px-3" routerLink="/orders" routerLinkActive="active">
-                        <i class="bi bi-receipt me-1"></i>{{ 'NAV.ORDERS' | translate }}
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link px-3" routerLink="/users" routerLinkActive="active">
-                        <i class="bi bi-people me-1"></i>{{ 'NAV.USERS' | translate }}
-                    </a>
-                </li>
-            </ul>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link px-3" routerLink="/inventory" routerLinkActive="active">
+                            <i class="bi bi-archive me-1"></i>{{ 'NAV.INVENTORY' | translate }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" routerLink="/orders" routerLinkActive="active">
+                            <i class="bi bi-receipt me-1"></i>{{ 'NAV.ORDERS' | translate }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" routerLink="/users" routerLinkActive="active">
+                            <i class="bi bi-people me-1"></i>{{ 'NAV.USERS' | translate }}
+                        </a>
+                    </li>
+                </ul>
 
-            <!-- Language Selector -->
-            <div class="dropdown">
-                <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <!-- Language Selector -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     🌐 <span class="ms-2">{{ currentLang.toUpperCase() }}</span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
-                    <li><a class="dropdown-item" (click)="switchLang('es')">🇪🇸 Español</a></li>
-                    <li><a class="dropdown-item" (click)="switchLang('ca')">🏴 Català</a></li>
-                    <li><a class="dropdown-item" (click)="switchLang('en')">🇬🇧 English</a></li>
-                </ul>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
+                        <li><a class="dropdown-item" (click)="switchLang('es')">🇪🇸 Español</a></li>
+                        <li><a class="dropdown-item" (click)="switchLang('ca')">🏴 Català</a></li>
+                        <li><a class="dropdown-item" (click)="switchLang('en')">🇬🇧 English</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
+    </nav>
+
+
+    <!-- Contenido principal -->
+    <div class="container my-5 flex-fill">
+        <router-outlet></router-outlet>
     </div>
-</nav>
 
+    <!-- Footer -->
+    <footer class="bg-dark text-light pt-4 mt-5 border-top">
+        <div class="container text-center text-md-start">
+            <div class="row">
+                <!-- Información -->
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <h5 class="fw-bold">My App</h5>
+                    <p class="mb-1">Aplicación de gestión de inventario y pedidos.</p>
+                    <p class="small mb-0">&copy; {{ currentYear }} My App. Todos los derechos reservados.</p>
+                </div>
 
-<!-- Contenido principal -->
-<div class="container my-5">
-    <router-outlet></router-outlet>
+                <!-- Desarrolladores -->
+                <div class="col-md-6 text-md-end">
+                    <h6 class="fw-semibold">Desarrollado por:</h6>
+                    <p class="mb-1">Roger Bajona</p>
+                    <p class="mb-0">Raúl Lario</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center py-3 mt-3 border-top border-secondary small">
+            <a href="#" class="text-light text-decoration-none me-3">Política de privacidad</a>
+            <a href="#" class="text-light text-decoration-none">Términos de uso</a>
+        </div>
+    </footer>
 </div>

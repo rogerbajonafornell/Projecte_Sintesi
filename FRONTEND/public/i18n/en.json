@@ -1,5 +1,11 @@
 {
     "BACKEND_RESPONSE": "Backend response:",
+    "ERRORS": {
+        "REQUIRED": "This field is required.",
+        "POSITIVE_NUMBER": "Must be greater than 0.",
+        "NON_NEGATIVE_NUMBER": "Cannot be negative.",
+        "INVALID_CODE": "Must be a positive number."
+    },
     "GENERAL": {
         "NEXT": "Next",
         "PREVIOUS": "Previous",
@@ -31,5 +37,19 @@
         "TITLE": "Users",
         "USERNAME": "Username",
         "FIRST_NAME": "First Name"
+    },
+    "HOME": {
+        "TITLE": "Welcome to BotigaRR",
+        "DESCRIPTION": "Manage your inventory and orders efficiently.",
+        "INVENTORY": {
+            "TITLE": "Inventory",
+            "TEXT": "View and manage available stock easily.",
+            "BUTTON": "View Inventory"
+        },
+        "ORDERS": {
+            "TITLE": "Orders",
+            "TEXT": "Review and track current orders clearly.",
+            "BUTTON": "View Orders"
+        }
     }
 }

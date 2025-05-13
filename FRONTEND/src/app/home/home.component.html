@@ -1,6 +1,6 @@
 <div class="container text-center mt-5">
-    <h1 class="mb-4 fw-bold text-primary">Bienvenido a My App</h1>
-    <p class="lead text-muted">Gestione su inventario y pedidos de manera eficiente.</p>
+    <h1 class="mb-4 fw-bold text-primary">{{ 'HOME.TITLE' | translate }}</h1>
+    <p class="lead text-muted">{{ 'HOME.DESCRIPTION' | translate }}</p>
 
     <div class="row mt-5 g-4">
         <div class="col-md-6">
@@ -9,11 +9,11 @@
                     <div class="mb-3 text-primary">
                         <i class="bi bi-box-seam display-5"></i>
                     </div>
-                    <h5 class="card-title fw-semibold">Inventario</h5>
-                    <p class="card-text text-muted">Consulte y administre el stock disponible con facilidad.</p>
+                    <h5 class="card-title fw-semibold">{{ 'HOME.INVENTORY.TITLE' | translate }}</h5>
+                    <p class="card-text text-muted">{{ 'HOME.INVENTORY.TEXT' | translate }}</p>
                     <a routerLink="/inventory" class="btn btn-outline-primary px-4 py-2 rounded-pill">
-                        Ver Inventario
-                    </a>
+              {{ 'HOME.INVENTORY.BUTTON' | translate }}
+            </a>
                 </div>
             </div>
         </div>
@@ -24,11 +24,11 @@
                     <div class="mb-3 text-success">
                         <i class="bi bi-receipt display-5"></i>
                     </div>
-                    <h5 class="card-title fw-semibold">Pedidos</h5>
-                    <p class="card-text text-muted">Revise y controle los pedidos en curso de forma clara.</p>
+                    <h5 class="card-title fw-semibold">{{ 'HOME.ORDERS.TITLE' | translate }}</h5>
+                    <p class="card-text text-muted">{{ 'HOME.ORDERS.TEXT' | translate }}</p>
                     <a routerLink="/orders" class="btn btn-outline-success px-4 py-2 rounded-pill">
-                        Ver Pedidos
-                    </a>
+              {{ 'HOME.ORDERS.BUTTON' | translate }}
+            </a>
                 </div>
             </div>
         </div>

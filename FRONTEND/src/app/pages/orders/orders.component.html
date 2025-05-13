@@ -22,7 +22,7 @@
                     <td>{{ order.Article.PVP | number: '1.2-2' }}</td>
                     <td>{{ order.Quantitat }}</td>
                     <td>{{ order.PreuFinal | number: '1.2-2' }}</td>
-                    <td class="text-muted">{{ order.User.Username }}</td>
+                    <td class="text-muted">{{ order.User.FirstName }}</td>
                     <td>
                         <button class="btn btn-danger btn-sm" (click)="deleteItem(order.ComandaId)">🗑️</button>
                     </td>

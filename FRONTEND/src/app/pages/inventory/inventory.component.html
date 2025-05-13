@@ -27,30 +27,54 @@
                 <tr *ngIf="addingNewItem">
                     <td class="text-center fw-semibold">—</td>
                     <td>
-                        <input [(ngModel)]="newItem.DescripcionArticulo" class="form-control" [ngClass]="{ 'is-invalid': validationErrors.DescripcionArticulo }" />
+                        <input [(ngModel)]="newItem.DescripcionArticulo" name="descripcion" class="form-control" />
+                        <div *ngIf="validationErrors.DescripcionArticulo" class="text-danger small">
+                            {{ validationErrors.DescripcionArticulo }}
+                        </div>
                     </td>
                     <td>
-                        <input [(ngModel)]="newItem.PVP" type="number" class="form-control" [ngClass]="{ 'is-invalid': validationErrors.PVP }" />
+                        <input [(ngModel)]="newItem.PVP" name="pvp" type="number" class="form-control" />
+                        <div *ngIf="validationErrors.PVP" class="text-danger small">
+                            {{ validationErrors.PVP }}
+                        </div>
                     </td>
                     <td>
-                        <input [(ngModel)]="newItem.Unidades" type="number" class="form-control" [ngClass]="{ 'is-invalid': validationErrors.Unidades }" />
+                        <input [(ngModel)]="newItem.Unidades" name="unidades" type="number" class="form-control" />
+                        <div *ngIf="validationErrors.Unidades" class="text-danger small">
+                            {{ validationErrors.Unidades }}
+                        </div>
                     </td>
                     <td>
                         <div class="d-flex justify-content-center gap-2">
-                            <button class="btn btn-success btn-sm" (click)="addItem();">💾 {{ 'GENERAL.SAVE' | translate }}</button>
+                            <button class="btn btn-success btn-sm" (click)="addItem()">💾 {{ 'GENERAL.SAVE' | translate }}</button>
                             <button class="btn btn-secondary btn-sm" (click)="cancelNewItem()">↩ {{ 'GENERAL.CANCEL' | translate }}</button>
                         </div>
                     </td>
                 </tr>
                 <tr *ngFor="let item of getCurrentPageItems()">
                     <ng-container *ngIf="editingItem()?.CodigoArticulo === item.CodigoArticulo; else viewMode">
-                        <td class="text-center fw-semibold">{{ item.CodigoArticulo }}</td>
-                        <td><input [(ngModel)]="item.DescripcionArticulo" class="form-control" /></td>
-                        <td><input [(ngModel)]="item.PVP" type="number" class="form-control" /></td>
-                        <td><input [(ngModel)]="item.Unidades" type="number" class="form-control" /></td>
+                        <td class="text-center fw-semibold">{{ editingItem()!.CodigoArticulo }}</td>
+                        <td>
+                            <input [(ngModel)]="editingItem()!.DescripcionArticulo" class="form-control" />
+                            <div class="text-danger small" [style.visibility]="editValidationErrors.DescripcionArticulo ? 'visible' : 'hidden'">
+                                {{ editValidationErrors.DescripcionArticulo || '\u00A0' }}
+                            </div>
+                        </td>
+                        <td>
+                            <input [(ngModel)]="editingItem()!.PVP" type="number" class="form-control" />
+                            <div class="text-danger small" [style.visibility]="editValidationErrors.PVP ? 'visible' : 'hidden'">
+                                {{ editValidationErrors.PVP || '\u00A0' }}
+                            </div>
+                        </td>
+                        <td>
+                            <input [(ngModel)]="editingItem()!.Unidades" type="number" class="form-control" />
+                            <div class="text-danger small" [style.visibility]="editValidationErrors.Unidades ? 'visible' : 'hidden'">
+                                {{ editValidationErrors.Unidades || '\u00A0' }}
+                            </div>
+                        </td>
                         <td>
                             <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-success btn-sm" (click)="saveEdit(item)">💾 {{ "GENERAL.SAVE" | translate }}</button>
+                                <button class="btn btn-success btn-sm" (click)="saveEdit(editingItem()!)">💾 {{ "GENERAL.SAVE" | translate }}</button>
                                 <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">↩ {{ "GENERAL.CANCEL" | translate }}</button>
                             </div>
                         </td>
