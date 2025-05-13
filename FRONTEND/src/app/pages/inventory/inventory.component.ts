@@ -27,7 +27,7 @@ export class InventoryComponent implements OnDestroy {
 
   constructor() {
     this.inventoryService.getArticles().subscribe((data) => {
-    console.log(data);
+      console.log(data);
       this.inventory.set(data);
     });
 
@@ -60,7 +60,66 @@ export class InventoryComponent implements OnDestroy {
       this.currentPage.set(page);
     }
   }
-  
+
+  addingNewItem: boolean = false;
+  newItem = { DescripcionArticulo: '', PVP: null, Unidades: null };
+  validationErrors: any = {};
+  errorMessage: string = '';
+
+  startAddingNewItem() {
+    this.addingNewItem = true;
+    this.newItem = { DescripcionArticulo: '', PVP: null, Unidades: null };
+    this.validationErrors = {};
+    this.errorMessage = '';
+  }
+
+  cancelNewItem() {
+    this.addingNewItem = false;
+    this.newItem = { DescripcionArticulo: '', PVP: null, Unidades: null };
+    this.validationErrors = {};
+    this.errorMessage = '';
+  }
+
+  addItem() {
+    this.validationErrors = {};
+    this.errorMessage = '';
+
+    // Validación
+    if (!this.newItem.DescripcionArticulo?.trim()) {
+      this.validationErrors.DescripcionArticulo = true;
+    }
+    if (this.newItem.PVP == null || this.newItem.PVP <= 0) {
+      this.validationErrors.PVP = true;
+    }
+    if (this.newItem.Unidades == null || this.newItem.Unidades < 0) {
+      this.validationErrors.Unidades = true;
+    }
+
+    if (Object.keys(this.validationErrors).length > 0) {
+      this.translate.get('FORM.VALIDATION_ERROR').subscribe(res => {
+        this.errorMessage = res;
+      });
+      return;
+    }
+
+    const articleData = {
+      DescripcionArticulo: this.newItem.DescripcionArticulo!,
+      PVP: this.newItem.PVP!,
+      Unidades: this.newItem.Unidades!,
+    };
+
+    this.inventoryService.addArticle(articleData).subscribe({
+      next: (createdArticle) => {
+        this.inventory.set([createdArticle, ...this.inventory()]);
+        this.cancelNewItem();
+      },
+      error: (err) => {
+        this.errorMessage = 'Error al guardar el artículo.';
+        console.error(err);
+      }
+    });
+  }
+
   deleteItem(codigo: number) {
     if (confirm('¿Estás seguro de que deseas eliminar este artículo?')) {
       this.inventoryService.deleteArticle(codigo).subscribe({
@@ -78,11 +137,11 @@ export class InventoryComponent implements OnDestroy {
   editItem(item: Article) {
     this.editingItem.set({ ...item });
   }
-  
+
   cancelEdit() {
     this.editingItem.set(null);
   }
-  
+
   saveEdit(edited: Article) {
     // Aquí puedes enviar el cambio al backend
     this.inventoryService.updateArticle(edited).subscribe({

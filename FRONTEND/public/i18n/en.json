@@ -4,7 +4,10 @@
         "NEXT": "Next",
         "PREVIOUS": "Previous",
         "CODE": "Code",
-        "ACTIONS": "Actions"
+        "ACTIONS": "Actions",
+        "SAVE": "Save",
+        "CANCEL": "Cancel",
+        "ADD": "Add"
     },
     "NAV": {
         "INVENTORY": "View Inventory",

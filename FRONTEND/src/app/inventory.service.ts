@@ -34,6 +34,10 @@ export class InventoryService {
     return this.http.get<Article[]>(`${this.apiUrl}/api/inventari/articles/`);
   }
 
+  addArticle(article: Omit<Article, 'CodigoArticulo'>) {
+    return this.http.post<Article>(`${this.apiUrl}/api/inventari/articles/`, article);
+  }  
+
   deleteArticle(id: number) {
     return this.http.delete(`${this.apiUrl}/api/inventari/articles/${id}/`);
   }
