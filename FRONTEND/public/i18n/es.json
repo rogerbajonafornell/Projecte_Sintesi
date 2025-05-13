@@ -51,5 +51,10 @@
             "TEXT": "Revise y controle los pedidos en curso de forma clara.",
             "BUTTON": "Ver Pedidos"
         }
+    },
+    "FOOTER": {
+        "DESCRIPTION": "Aplicación de gestión de inventario y pedidos.",
+        "COPYRIGHT": "Todos los derechos reservados.",
+        "DEVELOPED_BY": "Desarrollado por:"
     }
 }

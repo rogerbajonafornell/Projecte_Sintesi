@@ -51,5 +51,10 @@
             "TEXT": "Revisa i controla les comandes en curs de manera clara.",
             "BUTTON": "Veure Comandes"
         }
+    },
+    "FOOTER": {
+        "DESCRIPTION": "Aplicació de gestió d'inventari i comandes.",
+        "COPYRIGHT": "Tots els drets reservats.",
+        "DEVELOPED_BY": "Desenvolupat per:"
     }
 }
