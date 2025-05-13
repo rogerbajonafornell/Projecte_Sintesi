@@ -9,10 +9,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseBadRequest
 from dotenv import load_dotenv
 from decimal import Decimal
+#from .utils import search_similar_articles
 from inventari.models import Article
 from bot.models import Comanda, Usuari
 from .serializers import UsuariSerializer, ComandaSerializer
 from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework import status
  
 # Carregar variables d'entorn
 load_dotenv()
@@ -283,7 +286,15 @@ def buscar_article(descripcio):
         return art
     except Article.DoesNotExist:
         print(f"❌ Article.DoesNotExist for key: {key}")
-        return None
+        ### UN COP L'ARTICLE NO ES TROBA DE MANERA LITERAL EM BUSQUEM AMB ENDPOINTS GRÀCIES A PINECONE
+        """  similar_ids = search_similar_articles(key)
+        if similar_ids:
+            similar_articles = Article.objects.filter(CodigoArticulo__in=similar_ids)
+            print(f"🔍 Found similar articles: {[a.DescripcionArticulo for a in similar_articles]}")
+            return similar_articles  # Retorna un QuerySet amb articles similars
+        else:
+            print(f"❌ No similar articles found")
+            return None """
 
 
 def actualitzar_unidades(article, quantitat):
@@ -318,3 +329,15 @@ class ComandaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comanda.objects.all()
     serializer_class = ComandaSerializer
     lookup_field = 'ComandaId'
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        article = instance.article
+
+        # Sumar la cantidad de vuelta al inventario
+        article.Unidades += instance.Quantitat
+        article.save()
+
+        # Eliminar la comanda
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
