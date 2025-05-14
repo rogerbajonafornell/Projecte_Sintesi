@@ -51,5 +51,10 @@
             "TEXT": "Review and track current orders clearly.",
             "BUTTON": "View Orders"
         }
+    },
+    "FOOTER": {
+        "DESCRIPTION": "Inventory and order management application.",
+        "COPYRIGHT": "All rights reserved.",
+        "DEVELOPED_BY": "Developed by:"
     }
 }
