@@ -21,6 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #path('api_frontend/', include('prova_conexio_frontend_app.urls')),
     path('webhook/', telegram_webhook, name='telegram_webhook'),
-    path('api/inventari/', include('inventari.urls')),
-    path('api/bot/', include('bot.urls')),
+    path('inventari/', include('inventari.urls')),
+    path('bot/', include('bot.urls')),
 ]

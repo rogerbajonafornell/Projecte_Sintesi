@@ -46,6 +46,7 @@ SYSTEM_PROMPT = {
     "content": (
         "You are ShopMate, a professional, multilingual shopping assistant. "
         "Always ask and answer in the same language as the user’s last message. "
+        "Use the user's first name (provided in the conversation context) in your responses to make them personalized. "
         "Follow this flow and output only JSON with keys: action, article, quantity, message, language.\n\n"
         "1. If no article named, action=ask, article=null, quantity=null, ask: 'Which item would you like to buy?'.\n"
         "2. When user gives an article name, action=search, article=<name>, quantity=null, ask: 'How many units of <article> do you want?'.\n"
@@ -123,7 +124,7 @@ def telegram_webhook(request):
 
 
 def call_openai(messages):
-    print(f"⚙️ Calling OpenAI with messages: {messages}")
+    #print(f"⚙️ Calling OpenAI with messages: {messages}")
     resp = openai.chat.completions.create(
     model="gpt-4o-2024-08-06",
     messages=messages,
@@ -172,6 +173,10 @@ def process_update(body):
         }
     )
 
+    # Obtenir el nom de l'usuari
+    usuari = Usuari.objects.get(UserId=user_id)
+    first_name = usuari.FirstName
+
     if 'voice' in msg:
         print("🎤 Voice message detected")
         user_text = handle_voice_message(msg['voice']['file_id']) or ''
@@ -183,7 +188,11 @@ def process_update(body):
     history.append({"role": "user", "content": user_text})
     print(f"📚 Conversation history: {history}")
 
-    convo = [SYSTEM_PROMPT] + history
+    # Afegir el nom de l'usuari al context
+    convo = [
+        {"role": "system", "content": f"The user's name is {first_name}."},
+        SYSTEM_PROMPT
+    ] + history
     result = call_openai(convo)
 
     # Codi principal
