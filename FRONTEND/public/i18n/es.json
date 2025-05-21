@@ -56,5 +56,12 @@
         "DESCRIPTION": "Aplicación de gestión de inventario y pedidos.",
         "COPYRIGHT": "Todos los derechos reservados.",
         "DEVELOPED_BY": "Desarrollado por:"
+    },
+    "LOGIN": {
+        "TITLE": "Iniciar Sesión",
+        "USERNAME": "Usuario",
+        "PASSWORD": "Contraseña",
+        "LOGGING": "Ingresando...",
+        "ENTER": "Entrar"
     }
 }

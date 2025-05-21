@@ -31,33 +31,33 @@ export class InventoryService {
   constructor(private http: HttpClient) {}
 
   getArticles() {
-    return this.http.get<Article[]>(`${this.apiUrl}/api/inventari/articles/`);
+    return this.http.get<Article[]>(`${this.apiUrl}/inventari/articles/`);
   }
 
   addArticle(article: Omit<Article, 'CodigoArticulo'>) {
-    return this.http.post<Article>(`${this.apiUrl}/api/inventari/articles/`, article);
+    return this.http.post<Article>(`${this.apiUrl}/inventari/articles/`, article);
   }  
 
   deleteArticle(id: number) {
-    return this.http.delete(`${this.apiUrl}/api/inventari/articles/${id}/`);
+    return this.http.delete(`${this.apiUrl}/inventari/articles/${id}/`);
   }
 
   updateArticle(article: Article) {
     return this.http.put<Article>(
-      `${this.apiUrl}/api/inventari/articles/${article.CodigoArticulo}/`,
+      `${this.apiUrl}/inventari/articles/${article.CodigoArticulo}/`,
       article
     );
   }
   
   getUsuaris() {
-    return this.http.get<Usuari[]>(`${this.apiUrl}/api/bot/usuaris/`);
+    return this.http.get<Usuari[]>(`${this.apiUrl}/bot/usuaris/`);
   }
 
   getComandes() {
-    return this.http.get<Comanda[]>(`${this.apiUrl}/api/bot/comandes/`);
+    return this.http.get<Comanda[]>(`${this.apiUrl}/bot/comandes/`);
   }
 
   deleteOrder(id: number) {
-    return this.http.delete(`${this.apiUrl}/api/bot/comandes/${id}/`);
+    return this.http.delete(`${this.apiUrl}/bot/comandes/${id}/`);
   }
 }

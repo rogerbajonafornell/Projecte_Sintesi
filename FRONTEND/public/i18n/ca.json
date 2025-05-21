@@ -56,5 +56,12 @@
         "DESCRIPTION": "Aplicació de gestió d'inventari i comandes.",
         "COPYRIGHT": "Tots els drets reservats.",
         "DEVELOPED_BY": "Desenvolupat per:"
+    },
+    "LOGIN": {
+        "TITLE": "Iniciar Sessió",
+        "USERNAME": "Usuari",
+        "PASSWORD": "Contrassenya",
+        "LOGGING": "Ingressant...",
+        "ENTER": "Entrar"
     }
 }

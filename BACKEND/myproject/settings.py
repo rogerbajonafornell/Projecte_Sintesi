@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,7 +33,7 @@ SECRET_KEY = 'django-insecure-mm_yns=5koy@5e!rf&8gv4_4u2q(km7+rblb8apz^!0oevy-x=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['roughly-subtle-tuna.ngrok-free.app','localhost']
+ALLOWED_HOSTS = ['roughly-subtle-tuna.ngrok-free.app','localhost','10.52.5.102','infla.cat','127.0.0.1']
 
 
 # Application definition
@@ -49,8 +48,16 @@ INSTALLED_APPS = [
     'bot',
     'inventari',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'rest_framework.authtoken',
+    'LoginAdmin'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -64,7 +71,9 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",  # Angular dev server
+    "http://infla.cat:44000",
+    "http://localhost:4200",
+      # Angular dev server
 ]
 
 ROOT_URLCONF = 'myproject.urls'
