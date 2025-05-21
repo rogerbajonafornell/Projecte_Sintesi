@@ -1,7 +1,0 @@
-{
-    "/api_frontend": {
-        "target": "http://localhost:8000",
-        "secure": false,
-        "changeOrigin": true
-    }
-}
