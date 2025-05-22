@@ -13,7 +13,7 @@
         "ACTIONS": "Actions",
         "SAVE": "Save",
         "CANCEL": "Cancel",
-        "ADD": "Add"
+        "ADD": "Add article"
     },
     "NAV": {
         "INVENTORY": "View Inventory",
@@ -24,7 +24,11 @@
         "TITLE": "Inventory",
         "DESCRIPTION": "Description",
         "PVP": "Price Per Item",
-        "QUANTITY": "Quantity"
+        "QUANTITY": "Quantity",
+        "SEARCH_PLACEHOLDER": "Search by description...",
+        "MIN_PRICE": "Min price",
+        "MAX_PRICE": "Max price",
+        "CLEAR_FILTERS": "Clear filters"
     },
     "ORDERS": {
         "TITLE": "Orders",

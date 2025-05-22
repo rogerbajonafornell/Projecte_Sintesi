@@ -23,7 +23,6 @@ export class OrdersComponent implements OnDestroy {
 
   constructor() {
     this.inventoryService.getComandes().subscribe((data) => {
-      console.log(data);
       this.orders.set(data);
     });
 

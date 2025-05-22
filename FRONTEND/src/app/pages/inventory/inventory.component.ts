@@ -27,9 +27,17 @@ export class InventoryComponent implements OnDestroy {
 
   editValidationErrors: any = {};
 
+  addingNewItem: boolean = false;
+  newItem = { DescripcionArticulo: '', PVP: null, Unidades: null };
+  validationErrors: any = {};
+  errorMessage: string = '';
+
+  searchTerm: string = '';
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+
   constructor() {
     this.inventoryService.getArticles().subscribe((data) => {
-      console.log(data);
       this.inventory.set(data);
     });
 
@@ -48,13 +56,45 @@ export class InventoryComponent implements OnDestroy {
     });
   }
 
-  get totalPages(): number {
-    return Math.ceil(this.inventory().length / this.itemsPerPage);
+  getCurrentPageItems(): Article[] {
+    let filtered = this.inventory();
+
+    if (this.searchTerm.trim()) {
+      filtered = filtered.filter(item =>
+        item.DescripcionArticulo.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+
+    if (this.minPrice != null) {
+      filtered = filtered.filter(item => item.PVP >= this.minPrice!);
+    }
+
+    if (this.maxPrice != null) {
+      filtered = filtered.filter(item => item.PVP <= this.maxPrice!);
+    }
+
+    const start = (this.currentPage() - 1) * this.itemsPerPage;
+    return filtered.slice(start, start + this.itemsPerPage);
   }
 
-  getCurrentPageItems(): Article[] {
-    const start = (this.currentPage() - 1) * this.itemsPerPage;
-    return this.inventory().slice(start, start + this.itemsPerPage);
+  get totalPages(): number {
+    let filtered = this.inventory();
+
+    if (this.searchTerm.trim()) {
+      filtered = filtered.filter(item =>
+        item.DescripcionArticulo.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+
+    if (this.minPrice != null) {
+      filtered = filtered.filter(item => item.PVP >= this.minPrice!);
+    }
+
+    if (this.maxPrice != null) {
+      filtered = filtered.filter(item => item.PVP <= this.maxPrice!);
+    }
+
+    return Math.ceil(filtered.length / this.itemsPerPage) || 1;
   }
 
   goToPage(page: number) {
@@ -63,10 +103,12 @@ export class InventoryComponent implements OnDestroy {
     }
   }
 
-  addingNewItem: boolean = false;
-  newItem = { DescripcionArticulo: '', PVP: null, Unidades: null };
-  validationErrors: any = {};
-  errorMessage: string = '';
+  clearFilters() {
+    this.searchTerm = '';
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.currentPage.set(1);
+  }
 
   startAddingNewItem() {
     this.addingNewItem = true;
