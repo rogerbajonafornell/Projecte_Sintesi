@@ -50,7 +50,6 @@ export class LoginComponent {
 
     this.auth.login(username, password).subscribe({
       next: () => {
-        console.log("molt be")
         this.loading = false;
         this.router.navigate(['/home']);
       },

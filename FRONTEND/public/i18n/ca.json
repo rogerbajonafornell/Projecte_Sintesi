@@ -13,7 +13,7 @@
         "ACTIONS": "Accions",
         "SAVE": "Guardar",
         "CANCEL": "Cancel·lar",
-        "ADD": "Afegir"
+        "ADD": "Afegir article"
     },
     "NAV": {
         "INVENTORY": "Veure Inventari",
@@ -24,7 +24,11 @@
         "TITLE": "Inventari",
         "DESCRIPTION": "Descripció",
         "PVP": "Preu Unitari",
-        "QUANTITY": "Unitats"
+        "QUANTITY": "Unitats",
+        "SEARCH_PLACEHOLDER": "Cerca per descripció...",
+        "MIN_PRICE": "Preu mín.",
+        "MAX_PRICE": "Preu màx.",
+        "CLEAR_FILTERS": "Netejar filtres"
     },
     "ORDERS": {
         "TITLE": "Comandes",
