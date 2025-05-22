@@ -309,7 +309,7 @@ def process_update(body):
         art_obj = pending_orders[chat_id]
         if isinstance(art_obj, Article):
             total_price = art_obj.PVP * qty
-            message += f" {translate_message('Total price: {total_price}€.', lang, total_price=total_price)}"
+            message += f" {translate_message('Total price: {total_price}.', lang, total_price=total_price)}"
             pending_confirmations[chat_id] = (art_obj, qty)
         else:
             error_message = translate_message("No exact article found for confirmation.", lang)
@@ -324,7 +324,7 @@ def process_update(body):
                     generar_comanda(art_obj.CodigoArticulo, art_obj.PVP, qty, user_id)
                     total_price = art_obj.PVP * qty
                     success_message = translate_message(
-                        "Your order of {qty} {article} has been placed successfully. Total price: {total_price}€. Thank you, {first_name}!",
+                        "Your order of {qty} {article} has been placed successfully. Total price: {total_price}. Thank you, {first_name}!",
                         lang,
                         qty=qty,
                         article=art_obj.DescripcionArticulo,
@@ -340,7 +340,7 @@ def process_update(body):
                     )
                     send_telegram_message(chat_id, out_of_stock_message)
             else:
-                error_message = translate_text("No exact article found to process the order.", lang)
+                error_message = translate_message("No exact article found to process the order.")
                 send_telegram_message(chat_id, error_message)
             pending_confirmations.pop(chat_id, None)
             pending_orders.pop(chat_id, None)
@@ -348,7 +348,7 @@ def process_update(body):
             chat_language.pop(chat_id, None)
             return
     elif action == 'cancel':
-        cancel_message = translate_text("❌ Your order has been cancelled. ❌", lang)
+        cancel_message = translate_message("Your order has been cancelled.", lang)
         send_telegram_message(chat_id, cancel_message)
         pending_confirmations.pop(chat_id, None)
         pending_orders.pop(chat_id, None)

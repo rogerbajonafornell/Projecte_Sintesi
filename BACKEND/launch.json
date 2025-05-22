@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Django Debug",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "runserver",
+                "--noreload"  // Evita recargas automáticas para depuración
+            ],
+            "django": true,
+            "justMyCode": false  // Permite depurar código de bibliotecas como Django
+        }
+    ]
+}

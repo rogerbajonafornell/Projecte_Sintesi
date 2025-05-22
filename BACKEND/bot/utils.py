@@ -19,7 +19,7 @@ def generate_embedding(text: str) -> list[float]:
     )
     return resp.data[0].embedding
 
-def search_similar_articles(query: str, top_k: int = 5) -> list[int]:
+def search_similar_articles(query: str, top_k: int = 10) -> list[int]:
     """Cerca similars a Pinecone."""
     emb = generate_embedding(query)
     results = index.query(
