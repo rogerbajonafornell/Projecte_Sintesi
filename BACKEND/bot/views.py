@@ -229,16 +229,19 @@ def process_update(body):
 
             
             ################# ARREGLO HISTORIC #########################
+            print(f"\n{selected_article.DescripcionArticulo}\n")
             history.append({"role": "user", "content": f"The article you have to put in the json is: article={selected_article.DescripcionArticulo}"})
             pending_orders[chat_id] = selected_article
             pending_selections.pop(chat_id)
         else:
-            invalid_message = translate_text(
+            """  invalid_message = translate_text(
                 "Selecció invàlida. Si us plau, tria una lletra de la llista.",
                 chat_language.get(chat_id, 'en')
-            )
-            send_telegram_message(chat_id, invalid_message)
-            return
+            ) """
+            #send_telegram_message(chat_id, "posa l'accio en el JSON a: action=cancel")
+            history.append({"role": "user", "content": f"The action you have to put in the json is: action=cancel"})
+            pending_selections.pop(chat_id)
+            #return
 
     else:
         history.append({"role": "user", "content": user_text})
@@ -279,7 +282,7 @@ def process_update(body):
         if isinstance(art_obj, Article):
             pending_orders[chat_id] = art_obj
             unit_price = art_obj.PVP
-            message += f" {translate_message('The price per unit is {unit_price}.', lang, unit_price=unit_price)}"
+            message += f" {translate_message('The price per unit is {unit_price}€.', lang, unit_price=unit_price)}"
         elif art_obj is None:
             error_message = translate_message("No he trobat '{article}'. Si us plau, comprova el nom o intenta amb un producte diferent.", lang, article=article)
             send_telegram_message(chat_id, error_message)
@@ -295,7 +298,7 @@ def process_update(body):
             pending_selections[chat_id] = {
                 chr(97+i): (article, name) for i, (article, name) in enumerate(zip(similar_articles, translated_names))
             }
-            options = [f"·🛍️{chr(97+i)}) {name}" for i, name in enumerate(translated_names)]
+            options = [f"\n·🛍️{chr(97+i)}) {name}\n" for i, name in enumerate(translated_names)]
             suggestion_message = translate_message(
                 "No he trobat '{article}', però aquí tens productes similars:\n{options}\nSi us plau, selecciona una lletra (a, b, c, etc.).",
                 lang,
