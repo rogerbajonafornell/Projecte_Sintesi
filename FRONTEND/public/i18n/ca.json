@@ -30,6 +30,16 @@
         "MAX_PRICE": "Preu màx.",
         "CLEAR_FILTERS": "Netejar filtres"
     },
+    "DELETE_CONFIRMATION": {
+        "TITLE": "Estàs segur?",
+        "TEXT": "Aquesta acció eliminarà l'article permanentment.",
+        "CONFIRM_BUTTON": "Sí, eliminar",
+        "CANCEL_BUTTON": "Cancel·lar",
+        "SUCCESS_TITLE": "Eliminat",
+        "SUCCESS_TEXT": "L'article ha estat eliminat.",
+        "ERROR_TITLE": "Error",
+        "ERROR_TEXT": "Hi ha hagut un problema en eliminar l'article."
+    },
     "ORDERS": {
         "TITLE": "Comandes",
         "TOTAL_PRICE": "Preu Total",

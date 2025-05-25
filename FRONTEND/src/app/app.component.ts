@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { OnInit } from '@angular/core';
-import { ProvaBackendService } from './prova-backend.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from './login.service';
 import { CommonModule } from '@angular/common';
@@ -14,38 +13,34 @@ import { CommonModule } from '@angular/common';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit {
-  message = '';
-  title = 'title';
-  currentLang!: string;
-  currentYear = new Date().getFullYear();
+export class AppComponent {
+  message = ''; // Missatge rebut del backend
+  title = 'title'; // Nom genèric per a la pàgina (no s'està usant)
+  currentLang!: string; // Idioma actual seleccionat per a la traducció
+  currentYear = new Date().getFullYear(); // Any actual per a mostrar al peu de pàgina, si cal
 
   constructor(
-    private svc: ProvaBackendService, 
-    private translate: TranslateService,
-    public authService: AuthService, 
-    private router: Router) 
-    {
-    this.currentLang = 'es'
+    private translate: TranslateService,         // Servei de traducció ngx-translate
+    public authService: AuthService,             // Servei d'autenticació
+    private router: Router                       // Servei de navegació
+  ) {
+    // Idioma per defecte
+    const savedLang = localStorage.getItem('lang') || 'es';
+    this.currentLang = savedLang;
     this.translate.setDefaultLang(this.currentLang);
     this.translate.use(this.currentLang);
   }
 
-  switchLang(lang: any) {
-    this.currentLang = lang;
-    this.translate.use(lang);
+  // Canvia l'idioma actual
+  switchLang(lang: string) {
+  this.currentLang = lang;
+  this.translate.use(lang);
+  localStorage.setItem('lang', lang); // Guarda el idioma a loclastorage
   }
 
+  // Tanca la sessió i redirigeix a /login
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
-
-  ngOnInit() {
-    this.svc.getHello().subscribe({
-      next: data => this.message = data.message,
-      error: err => this.message = 'Error: ' + err.message
-    });
-  }
 }
-

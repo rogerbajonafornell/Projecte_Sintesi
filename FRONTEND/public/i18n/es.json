@@ -30,6 +30,16 @@
         "MAX_PRICE": "Precio máx.",
         "CLEAR_FILTERS": "Limpiar filtros"
     },
+    "DELETE_CONFIRMATION": {
+        "TITLE": "¿Estás seguro?",
+        "TEXT": "Esta acción eliminará el artículo permanentemente.",
+        "CONFIRM_BUTTON": "Sí, eliminar",
+        "CANCEL_BUTTON": "Cancelar",
+        "SUCCESS_TITLE": "Eliminado",
+        "SUCCESS_TEXT": "El artículo ha sido eliminado.",
+        "ERROR_TITLE": "Error",
+        "ERROR_TEXT": "Hubo un problema al eliminar el artículo."
+    },
     "ORDERS": {
         "TITLE": "Pedidos",
         "TOTAL_PRICE": "Precio Total",
