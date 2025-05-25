@@ -1,80 +1,107 @@
 import { Component, signal, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InventoryService, Comanda } from '../../inventory.service';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-orders',
   standalone: true,
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css'],
-  imports: [CommonModule, TranslateModule]
+  imports: [CommonModule, TranslateModule, FormsModule]
 })
-export class OrdersComponent implements OnDestroy {
-  // Injecció dels serveis
+export class OrdersComponent {
   private inventoryService = inject(InventoryService);
-  private translate = inject(TranslateService);
 
-  // Estat reactiu per la llista de comandes
   orders = signal<Comanda[]>([]);
 
-  // Control de paginació
   itemsPerPage = 10;
   currentPage = signal(1);
 
-  // Títol traduït
-  translatedTitle = signal<string>('');
+  searchTerm: string = '';
+  searchField: string = 'ComandaId';
 
-  // Subscripció per gestionar canvis d'idioma
-  private langSub: Subscription;
+  searchFields = [
+    { key: 'ComandaId', label: 'GENERAL.CODE' },
+    { key: 'Article.DescripcionArticulo', label: 'ORDERS.ARTICLE' },
+    { key: 'User.FirstName', label: 'ORDERS.USER' }
+  ];
 
   constructor() {
-    // Obté les comandes des del servei
     this.inventoryService.getComandes().subscribe((data) => {
       this.orders.set(data);
     });
-
-    // Carrega la traducció inicial
-    this.loadTranslations();
-
-    // Recarrega la traducció si canvia l'idioma
-    this.langSub = this.translate.onLangChange.subscribe(() => {
-      this.loadTranslations();
-    });
   }
 
-  // Carrega la traducció del títol
-  loadTranslations() {
-    this.translate.get('ORDERS.TITLE').subscribe((res: string) => {
-      this.translatedTitle.set(res);
-    });
-  }
-
-  // Calcula el total de pàgines segons la quantitat de comandes
-  get totalPages(): number {
-    return Math.ceil(this.orders().length / this.itemsPerPage);
-  }
-
-  // Retorna les comandes de la pàgina actual
+  // Filtrado y paginación
   getCurrentPageItems(): Comanda[] {
-    const startIndex = (this.currentPage() - 1) * this.itemsPerPage;
-    return this.orders().slice(startIndex, startIndex + this.itemsPerPage);
+    let filtered = this.orders();
+
+    if (this.searchTerm.trim()) {
+      const value = this.searchTerm.toLowerCase();
+      switch (this.searchField) {
+        case 'ComandaId':
+          filtered = filtered.filter(o => o.ComandaId.toString().includes(value));
+          break;
+        case 'Article.DescripcionArticulo':
+          filtered = filtered.filter(o =>
+            o.Article?.DescripcionArticulo?.toLowerCase().includes(value)
+          );
+          break;
+        case 'User.FirstName':
+          filtered = filtered.filter(o =>
+            o.User?.FirstName?.toLowerCase().includes(value)
+          );
+          break;
+      }
+    }
+
+    const start = (this.currentPage() - 1) * this.itemsPerPage;
+    return filtered.slice(start, start + this.itemsPerPage);
   }
 
-  // Canvia a una pàgina determinada
+  get totalPages(): number {
+    let filtered = this.orders();
+
+    if (this.searchTerm.trim()) {
+      const value = this.searchTerm.toLowerCase();
+      switch (this.searchField) {
+        case 'ComandaId':
+          filtered = filtered.filter(o => o.ComandaId.toString().includes(value));
+          break;
+        case 'Article.DescripcionArticulo':
+          filtered = filtered.filter(o =>
+            o.Article?.DescripcionArticulo?.toLowerCase().includes(value)
+          );
+          break;
+        case 'User.FirstName':
+          filtered = filtered.filter(o =>
+            o.User?.FirstName?.toLowerCase().includes(value)
+          );
+          break;
+      }
+    }
+
+    return Math.ceil(filtered.length / this.itemsPerPage) || 1;
+  }
+
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage.set(page);
     }
   }
 
-  // Elimina una comanda amb confirmació
+  clearFilters() {
+    this.searchTerm = '';
+    this.searchField = 'ComandaId';
+    this.currentPage.set(1);
+  }
+
   deleteItem(codigo: number) {
     if (confirm('¿Estás seguro de que deseas eliminar este artículo?')) {
       this.inventoryService.deleteOrder(codigo).subscribe({
         next: () => {
-          // Actualitza la llista localment després de l'eliminació
           this.orders.set(this.orders().filter(item => item.ComandaId !== codigo));
         },
         error: (err) => {
@@ -82,10 +109,5 @@ export class OrdersComponent implements OnDestroy {
         }
       });
     }
-  }
-
-  // Neteja la subscripció en destruir el component
-  ngOnDestroy() {
-    this.langSub?.unsubscribe();
   }
 }

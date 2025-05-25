@@ -1,8 +1,7 @@
-import { Component, signal, computed, inject, effect, OnDestroy } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InventoryService, Article, Comanda, Usuari } from '../../inventory.service';
-import { TranslateModule, TranslateService, LangChangeEvent } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { InventoryService, Article } from '../../inventory.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 
@@ -13,7 +12,7 @@ import Swal from 'sweetalert2';
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css',
 })
-export class InventoryComponent implements OnDestroy {
+export class InventoryComponent {
   private inventoryService = inject(InventoryService);
   private translate = inject(TranslateService);
 
@@ -21,10 +20,6 @@ export class InventoryComponent implements OnDestroy {
   inventory = signal<Article[]>([]);
   itemsPerPage = 10;
   currentPage = signal(1);
-
-  // Traducció del títol
-  translatedTitle = signal<string>('');
-  private langSub: Subscription;
 
   // Estat d'edició
   editingItem = signal<Article | null>(null);
@@ -45,19 +40,6 @@ export class InventoryComponent implements OnDestroy {
   constructor() {
     this.inventoryService.getArticles().subscribe((data) => {
       this.inventory.set(data);
-    });
-
-    this.loadTranslations();
-
-    this.langSub = this.translate.onLangChange.subscribe(() => {
-      this.loadTranslations();
-    });
-  }
-
-  // Carrega la traducció per al títol de l'inventari
-  loadTranslations() {
-    this.translate.get('INVENTORY.TITLE').subscribe((res: string) => {
-      this.translatedTitle.set(res);
     });
   }
 
@@ -195,36 +177,36 @@ export class InventoryComponent implements OnDestroy {
 
   // Elimina un article per codi
   deleteItem(codigo: number) {
-  Swal.fire({
-    title: this.translate.instant('DELETE_CONFIRMATION.TITLE'),
-    text: this.translate.instant('DELETE_CONFIRMATION.TEXT'),
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: this.translate.instant('DELETE_CONFIRMATION.CONFIRM_BUTTON'),
-    cancelButtonText: this.translate.instant('DELETE_CONFIRMATION.CANCEL_BUTTON')
-  }).then((result) => {
-    if (result.isConfirmed) {
-      this.inventoryService.deleteArticle(codigo).subscribe({
-        next: () => {
-          this.inventory.set(this.inventory().filter(item => item.CodigoArticulo !== codigo));
-          Swal.fire(
-            this.translate.instant('DELETE_CONFIRMATION.SUCCESS_TITLE'),
-            this.translate.instant('DELETE_CONFIRMATION.SUCCESS_TEXT'),
-            'success'
-          );
-        },
-        error: (err) => {
-          Swal.fire(
-            this.translate.instant('DELETE_CONFIRMATION.ERROR_TITLE'),
-            this.translate.instant('DELETE_CONFIRMATION.ERROR_TEXT'),
-            'error'
-          );
-        }
-      });
-    }
-  });
+    Swal.fire({
+      title: this.translate.instant('DELETE_CONFIRMATION.TITLE'),
+      text: this.translate.instant('DELETE_CONFIRMATION.TEXT'),
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: this.translate.instant('DELETE_CONFIRMATION.CONFIRM_BUTTON'),
+      cancelButtonText: this.translate.instant('DELETE_CONFIRMATION.CANCEL_BUTTON')
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.inventoryService.deleteArticle(codigo).subscribe({
+          next: () => {
+            this.inventory.set(this.inventory().filter(item => item.CodigoArticulo !== codigo));
+            Swal.fire(
+              this.translate.instant('DELETE_CONFIRMATION.SUCCESS_TITLE'),
+              this.translate.instant('DELETE_CONFIRMATION.SUCCESS_TEXT'),
+              'success'
+            );
+          },
+          error: (err) => {
+            Swal.fire(
+              this.translate.instant('DELETE_CONFIRMATION.ERROR_TITLE'),
+              this.translate.instant('DELETE_CONFIRMATION.ERROR_TEXT'),
+              'error'
+            );
+          }
+        });
+      }
+    });
   }
 
   // Entra en mode edició per un article
@@ -291,10 +273,5 @@ export class InventoryComponent implements OnDestroy {
     this.editingItem.set(null);
     this.editValidationErrors = {};
     this.errorMessage = '';
-  }
-
-  // Neteja la subscripció quan es destrueix el component
-  ngOnDestroy() {
-    this.langSub?.unsubscribe();
   }
 }
