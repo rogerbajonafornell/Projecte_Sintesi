@@ -1,56 +1,101 @@
 import { Component, signal, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InventoryService, Comanda } from '../../inventory.service';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-orders',
   standalone: true,
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css'],
-  imports: [CommonModule, TranslateModule]
+  imports: [CommonModule, TranslateModule, FormsModule]
 })
-export class OrdersComponent implements OnDestroy {
+export class OrdersComponent {
   private inventoryService = inject(InventoryService);
-  private translate = inject(TranslateService);
 
   orders = signal<Comanda[]>([]);
+
   itemsPerPage = 10;
   currentPage = signal(1);
-  translatedTitle = signal<string>('');
-  private langSub: Subscription;
+
+  searchTerm: string = '';
+  searchField: string = 'ComandaId';
+
+  searchFields = [
+    { key: 'ComandaId', label: 'GENERAL.CODE' },
+    { key: 'Article.DescripcionArticulo', label: 'ORDERS.ARTICLE' },
+    { key: 'User.FirstName', label: 'ORDERS.USER' }
+  ];
 
   constructor() {
     this.inventoryService.getComandes().subscribe((data) => {
       this.orders.set(data);
     });
-
-    this.loadTranslations();
-    this.langSub = this.translate.onLangChange.subscribe(() => {
-      this.loadTranslations();
-    });
   }
 
-  loadTranslations() {
-    this.translate.get('ORDERS.TITLE').subscribe((res: string) => {
-      this.translatedTitle.set(res);
-    });
+  // Filtrado y paginación
+  getCurrentPageItems(): Comanda[] {
+    let filtered = this.orders();
+
+    if (this.searchTerm.trim()) {
+      const value = this.searchTerm.toLowerCase();
+      switch (this.searchField) {
+        case 'ComandaId':
+          filtered = filtered.filter(o => o.ComandaId.toString().includes(value));
+          break;
+        case 'Article.DescripcionArticulo':
+          filtered = filtered.filter(o =>
+            o.Article?.DescripcionArticulo?.toLowerCase().includes(value)
+          );
+          break;
+        case 'User.FirstName':
+          filtered = filtered.filter(o =>
+            o.User?.FirstName?.toLowerCase().includes(value)
+          );
+          break;
+      }
+    }
+
+    const start = (this.currentPage() - 1) * this.itemsPerPage;
+    return filtered.slice(start, start + this.itemsPerPage);
   }
 
   get totalPages(): number {
-    return Math.ceil(this.orders().length / this.itemsPerPage);
-  }
+    let filtered = this.orders();
 
-  getCurrentPageItems(): Comanda[] {
-    const startIndex = (this.currentPage() - 1) * this.itemsPerPage;
-    return this.orders().slice(startIndex, startIndex + this.itemsPerPage);
+    if (this.searchTerm.trim()) {
+      const value = this.searchTerm.toLowerCase();
+      switch (this.searchField) {
+        case 'ComandaId':
+          filtered = filtered.filter(o => o.ComandaId.toString().includes(value));
+          break;
+        case 'Article.DescripcionArticulo':
+          filtered = filtered.filter(o =>
+            o.Article?.DescripcionArticulo?.toLowerCase().includes(value)
+          );
+          break;
+        case 'User.FirstName':
+          filtered = filtered.filter(o =>
+            o.User?.FirstName?.toLowerCase().includes(value)
+          );
+          break;
+      }
+    }
+
+    return Math.ceil(filtered.length / this.itemsPerPage) || 1;
   }
 
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage.set(page);
     }
+  }
+
+  clearFilters() {
+    this.searchTerm = '';
+    this.searchField = 'ComandaId';
+    this.currentPage.set(1);
   }
 
   deleteItem(codigo: number) {
@@ -64,9 +109,5 @@ export class OrdersComponent implements OnDestroy {
         }
       });
     }
-  }
-
-  ngOnDestroy() {
-    this.langSub?.unsubscribe();
   }
 }

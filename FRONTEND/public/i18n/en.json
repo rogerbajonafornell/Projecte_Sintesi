@@ -30,6 +30,16 @@
         "MAX_PRICE": "Max price",
         "CLEAR_FILTERS": "Clear filters"
     },
+    "DELETE_CONFIRMATION": {
+        "TITLE": "Are you sure?",
+        "TEXT": "This action will permanently delete the item.",
+        "CONFIRM_BUTTON": "Yes, delete",
+        "CANCEL_BUTTON": "Cancel",
+        "SUCCESS_TITLE": "Deleted",
+        "SUCCESS_TEXT": "The item has been deleted.",
+        "ERROR_TITLE": "Error",
+        "ERROR_TEXT": "There was a problem deleting the item."
+    },
     "ORDERS": {
         "TITLE": "Orders",
         "TOTAL_PRICE": "Final Price",
