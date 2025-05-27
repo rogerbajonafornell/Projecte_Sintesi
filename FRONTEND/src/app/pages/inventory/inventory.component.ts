@@ -119,61 +119,71 @@ export class InventoryComponent {
 
   // Afegeix un nou article si les validacions són correctes
   addItem() {
-    this.validationErrors = {};
-    this.errorMessage = '';
+  this.validationErrors = {};
+  this.errorMessage = '';
 
-    // Validació dels camps
-    if (!this.newItem.DescripcionArticulo?.trim()) {
-      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
-        this.validationErrors.DescripcionArticulo = msg
-      );
-    }
-
-    if (this.newItem.PVP === null || isNaN(this.newItem.PVP)) {
-      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
-        this.validationErrors.PVP = msg
-      );
-    } else if (this.newItem.PVP <= 0) {
-      this.translate.get('ERRORS.POSITIVE_NUMBER').subscribe(msg =>
-        this.validationErrors.PVP = msg
-      );
-    }
-
-    if (this.newItem.Unidades === null || isNaN(this.newItem.Unidades)) {
-      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
-        this.validationErrors.Unidades = msg
-      );
-    } else if (this.newItem.Unidades < 0) {
-      this.translate.get('ERRORS.NON_NEGATIVE_NUMBER').subscribe(msg =>
-        this.validationErrors.Unidades = msg
-      );
-    }
-
-    if (Object.keys(this.validationErrors).length > 0) {
-      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
-        this.errorMessage = 'Por favor, corrige los errores antes de guardar.'
-      );
-      return;
-    }
-
-    const articleData = {
-      DescripcionArticulo: this.newItem.DescripcionArticulo!,
-      PVP: this.newItem.PVP!,
-      Unidades: this.newItem.Unidades!,
-    };
-
-    // Envia a l’API
-    this.inventoryService.addArticle(articleData).subscribe({
-      next: (createdArticle) => {
-        this.inventory.set([createdArticle, ...this.inventory()]);
-        this.cancelNewItem();
-      },
-      error: (err) => {
-        this.errorMessage = 'Error al guardar el artículo.';
-        console.error(err);
-      }
-    });
+  // Validació dels camps
+  if (!this.newItem.DescripcionArticulo?.trim()) {
+    this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+      this.validationErrors.DescripcionArticulo = msg
+    );
   }
+
+  if (this.newItem.PVP === null || isNaN(this.newItem.PVP)) {
+    this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+      this.validationErrors.PVP = msg
+    );
+  } else if (this.newItem.PVP <= 0) {
+    this.translate.get('ERRORS.POSITIVE_NUMBER').subscribe(msg =>
+      this.validationErrors.PVP = msg
+    );
+  }
+
+  if (this.newItem.Unidades === null || isNaN(this.newItem.Unidades)) {
+    this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+      this.validationErrors.Unidades = msg
+    );
+  } else if (this.newItem.Unidades < 0) {
+    this.translate.get('ERRORS.NON_NEGATIVE_NUMBER').subscribe(msg =>
+      this.validationErrors.Unidades = msg
+    );
+  }
+
+  if (Object.keys(this.validationErrors).length > 0) {
+    this.translate.get('ERRORS.SOLVE_ERRORS').subscribe(msg =>
+      this.errorMessage = msg
+    );
+    return;
+  }
+
+  const articleData = {
+    DescripcionArticulo: this.newItem.DescripcionArticulo!,
+    PVP: this.newItem.PVP!,
+    Unidades: this.newItem.Unidades!,
+  };
+
+  // Envia a l’API
+  this.inventoryService.addArticle(articleData).subscribe({
+    next: (createdArticle) => {
+      this.inventory.set([createdArticle, ...this.inventory()]);
+      this.cancelNewItem();
+      Swal.fire(
+        this.translate.instant('ADD_CONFIRMATION.SUCCESS_TITLE'),
+        this.translate.instant('ADD_CONFIRMATION.SUCCESS_TEXT'),
+        'success'
+      );
+    },
+    error: (err) => {
+      console.error(err);
+      Swal.fire(
+        this.translate.instant('ADD_CONFIRMATION.ERROR_TITLE'),
+        this.translate.instant('ADD_CONFIRMATION.ERROR_TEXT'),
+        'error'
+      );
+    }
+  });
+  }
+
 
   // Elimina un article per codi
   deleteItem(codigo: number) {
@@ -216,57 +226,68 @@ export class InventoryComponent {
 
   // Desa els canvis d’un article editat si passa la validació
   saveEdit(edited: Article) {
-    this.editValidationErrors = {};
-    this.errorMessage = '';
+  this.editValidationErrors = {};
+  this.errorMessage = '';
 
-    // Validació
-    if (!edited.DescripcionArticulo?.trim()) {
-      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
-        this.editValidationErrors.DescripcionArticulo = msg
-      );
-    }
-
-    if (edited.PVP === null || isNaN(edited.PVP)) {
-      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
-        this.editValidationErrors.PVP = msg
-      );
-    } else if (edited.PVP <= 0) {
-      this.translate.get('ERRORS.POSITIVE_NUMBER').subscribe(msg =>
-        this.editValidationErrors.PVP = msg
-      );
-    }
-
-    if (edited.Unidades === null || isNaN(edited.Unidades)) {
-      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
-        this.editValidationErrors.Unidades = msg
-      );
-    } else if (edited.Unidades < 0) {
-      this.translate.get('ERRORS.NON_NEGATIVE_NUMBER').subscribe(msg =>
-        this.editValidationErrors.Unidades = msg
-      );
-    }
-
-    if (Object.keys(this.editValidationErrors).length > 0) {
-      this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
-        this.errorMessage = 'Por favor, corrige los errores antes de guardar.'
-      );
-      return;
-    }
-
-    this.inventoryService.updateArticle(edited).subscribe({
-      next: () => {
-        const updatedList = this.inventory().map(item =>
-          item.CodigoArticulo === edited.CodigoArticulo ? edited : item
-        );
-        this.inventory.set(updatedList);
-        this.editingItem.set(null);
-      },
-      error: (err) => {
-        this.errorMessage = 'Error actualizando el artículo.';
-        console.error(err);
-      }
-    });
+  // Validació
+  if (!edited.DescripcionArticulo?.trim()) {
+    this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+      this.editValidationErrors.DescripcionArticulo = msg
+    );
   }
+
+  if (edited.PVP === null || isNaN(edited.PVP)) {
+    this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+      this.editValidationErrors.PVP = msg
+    );
+  } else if (edited.PVP <= 0) {
+    this.translate.get('ERRORS.POSITIVE_NUMBER').subscribe(msg =>
+      this.editValidationErrors.PVP = msg
+    );
+  }
+
+  if (edited.Unidades === null || isNaN(edited.Unidades)) {
+    this.translate.get('ERRORS.REQUIRED').subscribe(msg =>
+      this.editValidationErrors.Unidades = msg
+    );
+  } else if (edited.Unidades < 0) {
+    this.translate.get('ERRORS.NON_NEGATIVE_NUMBER').subscribe(msg =>
+      this.editValidationErrors.Unidades = msg
+    );
+  }
+
+  if (Object.keys(this.editValidationErrors).length > 0) {
+    this.translate.get('ERRORS.SOLVE_ERRORS').subscribe(msg =>
+      this.errorMessage = msg
+    );
+    return;
+  }
+
+  this.inventoryService.updateArticle(edited).subscribe({
+    next: () => {
+      const updatedList = this.inventory().map(item =>
+        item.CodigoArticulo === edited.CodigoArticulo ? edited : item
+      );
+      this.inventory.set(updatedList);
+      this.editingItem.set(null);
+
+      Swal.fire(
+        this.translate.instant('EDIT_CONFIRMATION.SUCCESS_TITLE'),
+        this.translate.instant('EDIT_CONFIRMATION.SUCCESS_TEXT'),
+        'success'
+      );
+    },
+    error: (err) => {
+      console.error(err);
+      Swal.fire(
+        this.translate.instant('EDIT_CONFIRMATION.ERROR_TITLE'),
+        this.translate.instant('EDIT_CONFIRMATION.ERROR_TEXT'),
+        'error'
+      );
+    }
+  });
+  }
+
 
   // Cancel·la l’edició d’un article
   cancelEdit() {

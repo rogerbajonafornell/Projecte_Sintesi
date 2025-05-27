@@ -1,8 +1,9 @@
 import { Component, signal, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InventoryService, Comanda } from '../../inventory.service';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-orders',
@@ -13,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class OrdersComponent {
   private inventoryService = inject(InventoryService);
+  private translate = inject(TranslateService);
 
   orders = signal<Comanda[]>([]);
 
@@ -99,15 +101,36 @@ export class OrdersComponent {
   }
 
   deleteItem(codigo: number) {
-    if (confirm('¿Estás seguro de que deseas eliminar este artículo?')) {
+  Swal.fire({
+    title: this.translate.instant('DELETE_ORDER_CONFIRMATION.TITLE'),
+    text: this.translate.instant('DELETE_ORDER_CONFIRMATION.TEXT'),
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: this.translate.instant('DELETE_ORDER_CONFIRMATION.CONFIRM_BUTTON'),
+    cancelButtonText: this.translate.instant('DELETE_ORDER_CONFIRMATION.CANCEL_BUTTON')
+  }).then((result) => {
+    if (result.isConfirmed) {
       this.inventoryService.deleteOrder(codigo).subscribe({
         next: () => {
           this.orders.set(this.orders().filter(item => item.ComandaId !== codigo));
+          Swal.fire(
+            this.translate.instant('DELETE_ORDER_CONFIRMATION.SUCCESS_TITLE'),
+            this.translate.instant('DELETE_ORDER_CONFIRMATION.SUCCESS_TEXT'),
+            'success'
+          );
         },
         error: (err) => {
-          console.error('Error eliminando artículo', err);
+          console.error('Error eliminando pedido', err);
+          Swal.fire(
+            this.translate.instant('DELETE_ORDER_CONFIRMATION.ERROR_TITLE'),
+            this.translate.instant('DELETE_ORDER_CONFIRMATION.ERROR_TEXT'),
+            'error'
+          );
         }
       });
     }
-  }
+  });
+}
 }

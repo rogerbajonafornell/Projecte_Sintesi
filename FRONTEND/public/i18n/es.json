@@ -4,7 +4,8 @@
         "REQUIRED": "Este campo es obligatorio.",
         "POSITIVE_NUMBER": "Debe ser mayor que 0.",
         "NON_NEGATIVE_NUMBER": "No puede ser negativo.",
-        "INVALID_CODE": "Debe ser un número positivo."
+        "INVALID_CODE": "Debe ser un número positivo.",
+        "SOLVE_ERRORS": "Por favor, corrige los errores antes de continuar."
     },
     "GENERAL": {
         "NEXT": "Siguiente",
@@ -40,12 +41,35 @@
         "ERROR_TITLE": "Error",
         "ERROR_TEXT": "Hubo un problema al eliminar el artículo."
     },
+    "ADD_CONFIRMATION": {
+        "SUCCESS_TITLE": "Artículo añadido",
+        "SUCCESS_TEXT": "El artículo se ha añadido correctamente.",
+        "ERROR_TITLE": "Error al añadir",
+        "ERROR_TEXT": "Ha ocurrido un error al intentar guardar el artículo."
+    },
+    "EDIT_CONFIRMATION": {
+        "SUCCESS_TITLE": "Artículo actualizado",
+        "SUCCESS_TEXT": "El artículo ha sido actualizado correctamente.",
+        "ERROR_TITLE": "Error al actualizar",
+        "ERROR_TEXT": "Ha ocurrido un error al intentar actualizar el artículo."
+    },
+    "DELETE_ORDER_CONFIRMATION": {
+        "TITLE": "¿Estás seguro?",
+        "TEXT": "¿Deseas eliminar este pedido? Esta acción no se puede deshacer.",
+        "CONFIRM_BUTTON": "Sí, eliminar",
+        "CANCEL_BUTTON": "Cancelar",
+        "SUCCESS_TITLE": "Pedido eliminado",
+        "SUCCESS_TEXT": "El pedido se ha eliminado correctamente.",
+        "ERROR_TITLE": "Error",
+        "ERROR_TEXT": "Ocurrió un error al intentar eliminar el pedido."
+    },
     "ORDERS": {
         "TITLE": "Pedidos",
         "TOTAL_PRICE": "Precio Total",
         "QUANTITY": "Cantidad",
         "ARTICLE": "Artículo",
-        "USER": "Usuario"
+        "USER": "Usuario",
+        "FILTER_PLACEHOLDER": "Texto a filtrar..."
     },
     "USERS": {
         "TITLE": "Usuarios",

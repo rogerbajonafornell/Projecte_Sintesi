@@ -4,7 +4,8 @@
         "REQUIRED": "Aquest camp és obligatori.",
         "POSITIVE_NUMBER": "Ha de ser més gran que 0.",
         "NON_NEGATIVE_NUMBER": "No pot ser negatiu.",
-        "INVALID_CODE": "Ha de ser un nombre positiu."
+        "INVALID_CODE": "Ha de ser un nombre positiu.",
+        "SOLVE_ERRORS": "Per favor, corregeix els errors abans de continuar."
     },
     "GENERAL": {
         "NEXT": "Següent",
@@ -40,12 +41,35 @@
         "ERROR_TITLE": "Error",
         "ERROR_TEXT": "Hi ha hagut un problema en eliminar l'article."
     },
+    "DELETE_ORDER_CONFIRMATION": {
+        "TITLE": "Estàs segur?",
+        "TEXT": "Vols eliminar aquesta comanda? Aquesta acció no es pot desfer.",
+        "CONFIRM_BUTTON": "Sí, eliminar",
+        "CANCEL_BUTTON": "Cancel·lar",
+        "SUCCESS_TITLE": "Comanda eliminada",
+        "SUCCESS_TEXT": "La comanda s'ha eliminat correctament.",
+        "ERROR_TITLE": "Error",
+        "ERROR_TEXT": "S'ha produït un error en intentar eliminar la comanda."
+    },
+    "ADD_CONFIRMATION": {
+        "SUCCESS_TITLE": "Article afegit",
+        "SUCCESS_TEXT": "L'article s'ha afegit correctament.",
+        "ERROR_TITLE": "Error en afegir",
+        "ERROR_TEXT": "S'ha produït un error en intentar desar l'article."
+    },
+    "EDIT_CONFIRMATION": {
+        "SUCCESS_TITLE": "Article actualitzat",
+        "SUCCESS_TEXT": "L'article s'ha actualitzat correctament.",
+        "ERROR_TITLE": "Error en actualitzar",
+        "ERROR_TEXT": "S'ha produït un error en intentar actualitzar l'article."
+    },
     "ORDERS": {
         "TITLE": "Comandes",
         "TOTAL_PRICE": "Preu Total",
         "QUANTITY": "Quantitat",
         "ARTICLE": "Article",
-        "USER": "Usuari"
+        "USER": "Usuari",
+        "FILTER_PLACEHOLDER": "Text a filtrar..."
     },
     "USERS": {
         "TITLE": "Usuaris",
