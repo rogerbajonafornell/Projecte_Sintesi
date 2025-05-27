@@ -285,14 +285,11 @@ def process_update(body):
             # Secció vàlida: assignem l'article triat
             selected_article, translated_name = pending_selections[chat_id][selection]
 
-            ################# ARREGLO HISTORIC #########################
             print(f"\n{selected_article.DescripcionArticulo}\n")
             #history.append({"role": "user", "content": f"The article you have to put in the json is: article={selected_article.DescripcionArticulo}"})
             #history.append({"role": "user", "content": f"(admin) article={selected_article.DescripcionArticulo}"})
             #history.append({"role": "user", "content": f"i will buy: {selected_article.DescripcionArticulo}"})
             txt = translate_text("i will buy: ", ll, "en")
-            print(ll)
-            print(txt+str(selected_article.DescripcionArticulo))
             history.append({"role": "user", "content":txt+ " "+str(selected_article.DescripcionArticulo)})
 
             pending_orders[chat_id] = selected_article
@@ -351,24 +348,33 @@ def process_update(body):
     ll = lang
 
     # Gestió de cada acció (search, confirm, order, cancel)
+
+    #acció buscar
     if action == 'search' and article:
         art_obj = buscar_article(article)
-        print(f"Tipo de art_obj: {type(art_obj)}")
+
+        #Si és una intàcia, significa que ja s'ha trobat l'article.
         if isinstance(art_obj, Article):
             pending_orders[chat_id] = art_obj
             unit_price = art_obj.PVP
             message += f" {translate_message('The price per unit is {unit_price}€.', lang, unit_price=unit_price)}"
+        
+        #article no trobat ni s'han buscat articles nous.
         elif art_obj is None:
             error_message = translate_message("No he trobat '{article}'. Si us plau, comprova el nom o intenta amb un producte diferent.", lang, article=article)
             send_telegram_message(chat_id, error_message)
             conversation_history.pop(chat_id, None)
             return
+        
+        #Búsqueda d'articles similars
         else:
             similar_articles = list(art_obj)
             if not similar_articles:
                 error_message = translate_message("No he trobat articles similars per '{article}'.", lang, article=article)
                 send_telegram_message(chat_id, error_message)
                 return
+            
+            #tradueix en cas de no estar en Espanyol.
             if lang != "es":
                 translated_names = [translate_text(a.DescripcionArticulo, lang, 'es') for a in similar_articles]
             else:
@@ -377,6 +383,8 @@ def process_update(body):
             pending_selections[chat_id] = {
                 chr(97+i): (article, name) for i, (article, name) in enumerate(zip(similar_articles, translated_names))
             }
+
+            #llista de productes similars.
             options = [f"\n·🛍️{chr(97+i)}) {name}\n" for i, name in enumerate(translated_names)]
             suggestion_message = translate_message(
                 "No he trobat '{article}', però aquí tens productes similars:\n{options}\nSi us plau, selecciona una lletra (a, b, c, etc.).",
@@ -387,6 +395,7 @@ def process_update(body):
             send_telegram_message(chat_id, suggestion_message)
             return
             
+    #acció de confirmar
     elif action == 'confirm' and chat_id in pending_orders and isinstance(qty, int):
         art_obj = pending_orders[chat_id]
         if isinstance(art_obj, Article):
@@ -397,12 +406,16 @@ def process_update(body):
             error_message = translate_message("No exact article found for confirmation.", lang)
             send_telegram_message(chat_id, error_message)
             return
+    
+    #Es fa finalment la commanda
     elif action == 'order':
         if chat_id in pending_confirmations:
             art_obj, qty = pending_confirmations[chat_id]
             if isinstance(art_obj, Article):
                 if art_obj.Unidades >= qty:
                     actualitzar_unidades(art_obj, qty)
+
+                    #Es genera comanda
                     generar_comanda(art_obj.CodigoArticulo, art_obj.PVP, qty, user_id)
                     total_price = art_obj.PVP * qty
                     success_message = translate_message(
@@ -429,6 +442,7 @@ def process_update(body):
             conversation_history.pop(chat_id, None)
             chat_language.pop(chat_id, None)
             return
+    #en cas d'error
     elif action == 'cancel':
         cancel_message = translate_text("❌ Your order has been cancelled. ❌", lang)
         send_telegram_message(chat_id, cancel_message)
